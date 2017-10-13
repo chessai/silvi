@@ -1,0 +1,17 @@
+name:             silvi
+version:          0.0.1
+synopsis:         A generator for different kinds of server logs
+homepage:         https://github.com/chessai/silvi
+category:         Testing
+author:           Daniel Cartwright
+license:          Apache
+license-file:     LICENSE
+cabal-version:    >= 1.10
+build-type:       Simple
+default-language: Haskell2010
+
+library
+  build-depends: base >= 4.9 && < 5
+               , ip
+               , random-fu
+  exposed-modules:
