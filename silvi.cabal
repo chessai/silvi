@@ -1,5 +1,5 @@
 name:             silvi
-version:          0.0.1
+version:          1.0.0
 synopsis:         A generator for different kinds of server logs
 homepage:         https://github.com/chessai/silvi
 category:         Testing
@@ -14,4 +14,4 @@ library
   build-depends: base >= 4.9 && < 5
                , ip
                , random-fu
-  exposed-modules:
+  default-language: Haskell2010
