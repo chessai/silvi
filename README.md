@@ -6,7 +6,7 @@
 
 `silvi` is a Haskell library for generating fake logs from user specifications.
 
-## Using `silvi` as a library
+## Using as a library
 
 ### For Nix Users
 ```sh
@@ -16,6 +16,12 @@ nix-env -iA nixos.haskellPackages.silvi
 ### For non-Nix Users
 ```
 cabal install silvi
+```
+
+```hs
+module Foo where
+
+import Silvi
 ```
 
 ## Running as an executable
