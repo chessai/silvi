@@ -12,18 +12,13 @@
 ```sh
 nix-env -iA nixos.haskellPackages.silvi
 ```
+then import as one normally would with ```hs import Silvi```.
 
 ### For non-Nix Users
 ```
 cabal install silvi
 ```
-
-```hs
-module Foo where
-
-import Silvi
-```
-
+then import as one normally would with ```hs import Silvi```.
 ## Running as an executable
 
 ### For Nix Users
