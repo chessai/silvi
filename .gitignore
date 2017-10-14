@@ -1,3 +1,6 @@
 dist/
 result
 result-doc
+*.swp
+*.swm
+*.swo
