@@ -61,5 +61,4 @@ let
   pkgs = import <nixpkgs> { inherit config; };
 
 in
-  { silvi = pkgs.haskellPackages.silvi;
-  }
+  { silvi = pkgs.haskellPackages.callCabal2nix "silvi" ./. {}; }

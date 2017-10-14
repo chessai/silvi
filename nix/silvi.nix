@@ -2,7 +2,7 @@
 mkDerivation {
   pname = "silvi";
   version = "1.0.0";
-  src = ./.;
+  src = ./..;
   isLibrary = true;
   isExecutable = true;
   libraryHaskellDepends = [ base ip random-fu ];
