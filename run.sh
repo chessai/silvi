@@ -5,4 +5,4 @@
 rm -rf dist
 
 #this is a workaround while cabal-repl is broken (https://github.com/haskell/cabal/issues/4602)
-nix-shell -A silvi.env release.nix --run "runhaskell Setup.hs configure; runhaskell Setup.hs repl exe:silvi"
+nix-shell -A silvi.env release.nix --run "runhaskell Setup.hs configure; runhaskell Setup.hs repl lib:silvi"

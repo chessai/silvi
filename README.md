@@ -12,37 +12,11 @@
 ```sh
 nix-env -iA nixos.haskellPackages.silvi
 ```
-then import as one normally would:
-```hs 
-module Foo where
 
-import Silvi
-```
-
-### For non-Nix Users
-```
-cabal install silvi
-```
-then import as one normally would:
-```hs 
-module Foo where
-
-import Silvi
-```
-
-## Running as an executable
-
-### For Nix Users
+Alternatively, one may run `silvi` in a cabal repl inside of nix-shell:
 ```sh
 ./run.sh
 ```
-Note: This will run `silvi` in a cabal repl inside of a nix-shell.
-
-### For non-Nix Users
-```sh
-./repl.sh
-```
-Note: This will run `silvi` in a cabal repl.
 
 [hackage-badge]:
     https://img.shields.io/hackage/v/silvi.svg?label=Hackage
