@@ -10,12 +10,12 @@
 
 ### For Nix Users
 ```sh
-nix-env -iA nixos.haskellPackages.silvi
+$ nix-env -iA nixos.haskellPackages.silvi
 ```
 
 Alternatively, one may run `silvi` in a cabal repl inside of nix-shell:
 ```sh
-./run.sh
+$ ./run.sh
 ```
 
 [hackage-badge]:
