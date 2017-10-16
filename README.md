@@ -6,18 +6,6 @@
 
 `silvi` is a Haskell library for generating fake logs from user specifications.
 
-## Using as a library
-
-### For Nix Users
-```sh
-$ nix-env -iA nixos.haskellPackages.silvi
-```
-
-Alternatively, one may run `silvi` in a cabal repl inside of nix-shell:
-```sh
-$ ./run.sh
-```
-
 [hackage-badge]:
     https://img.shields.io/hackage/v/silvi.svg?label=Hackage
 [hackage-link]:
