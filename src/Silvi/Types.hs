@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Silvi.Types 
-  ( Time
+  ( Time(..)
   , UserIdent
   , UserId
   , Request

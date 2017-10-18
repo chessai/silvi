@@ -15,7 +15,8 @@ synopsis:                  A generator for different kinds of logs.
 description:               A Haskell library for generating logs
                            from user specifications.
 extra-source-files:        README.md
-tested-with:               GHC == 8.2.1
+tested-with:               GHC == 8.0.2
+                         , GHC == 8.2.1
 
 ---------------------------------------------------------------------
 
