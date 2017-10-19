@@ -4,4 +4,8 @@ module Silvi.Random
   (
   ) where
 
-import qualified Data.Random as R
+import Silvi.Types
+
+import Test.QuickCheck
+
+

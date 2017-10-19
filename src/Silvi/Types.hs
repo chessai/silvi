@@ -16,7 +16,7 @@ import Data.Text
 import Net.Types
 
 type   RFC1413        = Text
-data    Time           = Time { datetime :: Datetime, zone :: Text }
+data    Time           = Time { datetime :: Datetime, zone :: Text } deriving (Bounded, Enum, Show)
 newtype UserIdent      = UserIdent { getUserIdent :: RFC1413 }
 newtype UserId         = UserId { getUserId :: Text }
 newtype Request        = Request { getRequest :: Text }

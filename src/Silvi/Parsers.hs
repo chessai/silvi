@@ -2,6 +2,7 @@
 
 module Silvi.Parsers 
   ( parseIPv4
+  , parseTime
   ) where
 
 import Chronos.Datetime.Text (parser_DmyHMS)
@@ -26,6 +27,7 @@ parseIPv4 = do
   d4 <- decimal
   pure $ fromOctets d1 d2 d3 d4
 
+--[dd/mm/yyyy:hh:mm:ss -zzzz]
 parseTime :: Parser Time
 parseTime = do
   traverse_ Atto.char (Just '[')

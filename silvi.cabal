@@ -33,7 +33,7 @@ library
                          , base       >= 4.8 && < 5.0
                          , chronos
                          , ip
-                         , random-fu
+                         , QuickCheck
                          , text
     exposed-modules:       Silvi
     default-language:      Haskell2010
