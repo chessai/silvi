@@ -6,8 +6,9 @@ let
 
   # Jailbreak these packages
   doJailbreakPackages = [
-    "savage"
     "chronos"
+    "http-types"
+    "savage"
   ];
 
   # Disable haddocks for these packages

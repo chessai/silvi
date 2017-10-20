@@ -5,6 +5,8 @@
 rm -rf dist
 
 ## jailbreaks
+# http-types
+cabal2nix https://github.com/chessai/http-types.git > nix/http-types.nix
 # savage
 cabal2nix https://github.com/chessai/savage.git > nix/savage.nix
 # use version of chronos with some needed features
