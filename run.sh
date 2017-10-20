@@ -4,6 +4,9 @@
 # so delete this in between builds
 rm -rf dist
 
+## jailbreaks
+# savage
+cabal2nix https://github.com/chessai/savage.git > nix/savage.nix
 # use version of chronos with some needed features
 cabal2nix https://github.com/chessai/chronos.git > nix/chronos.nix
 
