@@ -5,15 +5,16 @@ module Silvi.Parsers
   , parseTime
   ) where
 
-import Chronos.Datetime.Text (parser_DmyHMS)
-import Chronos.Types (DatetimeFormat(..) )
+import Silvi.Types
+
+import Chronos.OffsetDatetime.Text (parser_DmyHMSz)
+import Chronos.Types (DatetimeFormat(..), OffsetDatetime(..), OffsetFormat(..) )
 import Control.Applicative
 import Data.Attoparsec.Text (decimal, Parser)
 import Data.Foldable (traverse_)
 import Data.Word
 import Net.IPv4 (fromOctets)
 import Net.Types (IPv4)
-import Silvi.Types
 import qualified Data.Attoparsec.Text as Atto
 
 parseIPv4 :: Parser IPv4
@@ -28,12 +29,10 @@ parseIPv4 = do
   pure $ fromOctets d1 d2 d3 d4
 
 --[dd/mm/yyyy:hh:mm:ss -zzzz]
-parseTime :: Parser Time
+parseTime :: Parser OffsetDatetime
 parseTime = do
   traverse_ Atto.char (Just '[')
-  datetime <- parser_DmyHMS (DatetimeFormat (Just '/') (Just ':') (Just ':'))
-  traverse_ Atto.char (Just ' ')
-  zone <- Atto.take 5 
+  t <- parser_DmyHMSz (fst clfTime) (snd clfTime)
   traverse_ Atto.char (Just ']')
-  pure $ (Time datetime zone)
+  pure t
   

@@ -1,26 +1,36 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Silvi.Types 
-  ( Time(..)
+  ( clfTime
   , UserIdent
   , UserId
   , Request
   , Resource
-  , HttpProtocol
-  , HttpStatusCode
   , ObjectSize
   ) where
 
-import Chronos.Types (Datetime)
+import Chronos.Types (OffsetDatetime(..), OffsetFormat(..), DatetimeFormat(..))
 import Data.Text
 import Net.Types
+import Network.HTTP.Types.Status
+import Network.HTTP.Types.Version 
 
-type   RFC1413        = Text
-data    Time           = Time { datetime :: Datetime, zone :: Text } deriving (Show)
-newtype UserIdent      = UserIdent { getUserIdent :: RFC1413 }
-newtype UserId         = UserId { getUserId :: Text }
-newtype Request        = Request { getRequest :: Text }
-newtype Resource       = Resource { getResource :: Text }
-newtype HttpProtocol   = HttpProtocol { getHttpProtocol :: Text }
-newtype HttpStatusCode = HttpStatusCode { getHttpStatusCode :: Int }
-newtype ObjectSize     = ObjectSize { getObjectSize :: Integer}
+-- | Common Log Format: https://en.wikipedia.org/wiki/Common_Log_Format#Example
+--   This is the format which time follows in CLF.
+clfTime :: (OffsetFormat, DatetimeFormat)
+clfTime = (OffsetFormatColonOff, DatetimeFormat (Just '/') (Just ':') (Just ':'))
+
+newtype UserIdent = UserIdent { getUserIdent :: Text }
+  deriving (Show,Read,Eq,Ord)
+
+newtype UserId = UserId { getUserId :: Text }
+  deriving (Show,Read,Eq,Ord)
+
+newtype Request = Request { getRequest :: Text }
+  deriving (Show,Read,Eq,Ord)
+
+newtype Resource = Resource { getResource :: Text }
+  deriving (Show,Read,Eq,Ord)
+
+newtype ObjectSize = ObjectSize { getObjectSize :: Integer }
+  deriving (Show,Read,Eq,Ord)
