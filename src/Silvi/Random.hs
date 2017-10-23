@@ -2,10 +2,10 @@
 
 module Silvi.Random 
   ( randomIPv4
-  , randomDatetime
   , randomOffsetDatetime
+  , randomHttpMethod
   , randomHttpStatus
-  , randomHttpProtocol
+  , randomHttpProtocolVersion
   ) where
 
 import Silvi.Types
@@ -14,18 +14,24 @@ import Chronos.Types
 import Data.Word (Word8)
 import Net.IPv4 (fromOctets)
 import Net.Types (IPv4)
+import Network.HTTP.Types.Method
 import Network.HTTP.Types.Status
 import Network.HTTP.Types.Version
 import Savage.Gen ( Gen(..), choose, oneof )
 
+randomHttpMethod :: Gen HttpMethod
+randomHttpMethod = do
+  hm <- oneof $ fmap pure httpMethods
+  pure hm
+  
 randomHttpStatus :: Gen HttpStatus
 randomHttpStatus = do
-  hs <- oneof $ fmap pure [status200,status204,status301,status400,status401,status403,status404,status405,status500,status503,status504]
+  hs <- oneof $ fmap pure httpStatuses
   pure hs
 
-randomHttpProtocol :: Gen HttpVersion
-randomHttpProtocol = do
-  hp <- oneof $ fmap pure [http09,http10,http11,http20]
+randomHttpProtocolVersion :: Gen HttpProtocolVersion
+randomHttpProtocolVersion = do
+  hp <- oneof $ fmap pure httpProtocolVersions
   pure hp
 
 randomIPv4 :: Gen IPv4
@@ -65,5 +71,5 @@ randomOffsetDatetime = do
 -- https://en.wikipedia.org/wiki/List_of_time_zone_abbreviations
 randomOffset :: Gen Offset
 randomOffset = do
-  o <- oneof $ fmap pure [100,200,300,330,400,430,500,530,545,600,630,700,800,845,900,930,1000,1030,1100,1200,1245,1300,1345,1400,0,(-100),(-200),(-230),(-300),(-330),(-400),(-500),(-600),(-700),(-800),(-900),(-930),(-1000),(-1100),(-1200)]
+  o <- oneof $ fmap pure offsets
   pure (Offset o)
