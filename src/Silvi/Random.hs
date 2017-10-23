@@ -4,6 +4,8 @@ module Silvi.Random
   ( randomIPv4
   , randomDatetime
   , randomOffsetDatetime
+  , randomHttpStatus
+  , randomHttpProtocol
   ) where
 
 import Silvi.Types
@@ -16,10 +18,16 @@ import Network.HTTP.Types.Status
 import Network.HTTP.Types.Version
 import Savage.Gen ( Gen(..), choose, oneof )
 
+randomHttpStatus :: Gen HttpStatus
+randomHttpStatus = do
+  hs <- oneof $ fmap pure [status200,status204,status301,status400,status401,status403,status404,status405,status500,status503,status504]
+  pure hs
+
 randomHttpProtocol :: Gen HttpVersion
 randomHttpProtocol = do
   hp <- oneof $ fmap pure [http09,http10,http11,http20]
   pure hp
+
 randomIPv4 :: Gen IPv4
 randomIPv4 = do
   d1 <- choose (0,255)

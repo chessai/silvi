@@ -5,11 +5,11 @@
 }:
 mkDerivation {
   pname = "chronos";
-  version = "0.4";
+  version = "0.5";
   src = fetchgit {
     url = "https://github.com/chessai/chronos.git";
-    sha256 = "1r7b7ypg2kv7qllkcf93vfkzrk1afxplcsya77l2saz58ijrak1s";
-    rev = "baba1ab62d247ed44c6eaa97a9991f8be74f4432";
+    sha256 = "188njqhyy1x73x2inflx2ql18009hh5xmbb7cmbsfmcanfhjblrd";
+    rev = "d631fab1749644887e3b7c3026e631cb6e42174f";
   };
   libraryHaskellDepends = [
     aeson attoparsec base bytestring hashable primitive text vector
