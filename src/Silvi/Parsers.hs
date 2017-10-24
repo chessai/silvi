@@ -10,14 +10,6 @@ module Silvi.Parsers
   ) where
 
 import Silvi.Types
-  ( HttpMethod
-  , HttpStatus
-  , HttpProtocol(..)
-  , HttpProtocolVersion
-  , Url
-  , LogEntry
-  , Log
-  )
 
 import Chronos (parser_DmyHMSz)
 import Chronos.Types 
@@ -41,16 +33,6 @@ import Network.HTTP.Types.Status
 import Network.HTTP.Types.Version
 import qualified Data.Attoparsec.Text as Atto
 import qualified Data.Text as T
-
-colon, dash, leftBracket, period, quote, rightBracket, slash, space :: Parser Char
-colon        = Atto.char ':'
-dash         = Atto.char '-'
-leftBracket  = Atto.char '['
-period       = Atto.char '.'
-quote        = Atto.char '"'
-rightBracket = Atto.char ']'
-slash        = Atto.char '/'
-space        = Atto.char ' '
 
 parseIPv4 :: Parser IPv4
 parseIPv4 = fmap fromOctets
