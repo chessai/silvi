@@ -28,9 +28,11 @@ import Control.Applicative
 import Data.Attoparsec.Text 
   ( asciiCI
   , decimal
-  , Parser)
+  , Parser
+  , takeTill)
 import Data.Foldable (traverse_)
 import Data.Maybe
+import Data.Text (Text)
 import Data.Word
 import Net.IPv4 (fromOctets)
 import Net.Types (IPv4)
@@ -38,6 +40,7 @@ import Network.HTTP.Types.Method
 import Network.HTTP.Types.Status
 import Network.HTTP.Types.Version
 import qualified Data.Attoparsec.Text as Atto
+import qualified Data.Text as T
 
 colon, dash, leftBracket, period, quote, rightBracket, slash, space :: Parser Char
 colon        = Atto.char ':'
@@ -83,6 +86,21 @@ parseHttpProtocolVersion :: Parser HttpProtocolVersion
 parseHttpProtocolVersion = fmap HttpVersion
       decimal 
   <*> (period *> decimal)
+
+parseUserident :: Parser (Maybe Text)
+parseUserident = do
+  ident <- takeTill (== ' ')
+  pure $ if ((T.length ident) == 1) && (T.head ident) == '-' then Nothing else Just ident
+
+parseByteSize :: Parser Int
+parseByteSize = decimal <* space
+
+parseQuote :: Parser (Maybe Text)
+parseQuote = fmap refTest (quote *> takeTill (== '"') <* quote)
+  where refTest r = if (T.length r == 0) then Nothing else Just r
+
+parseUrl :: Parser Text
+parseUrl = takeTill (== ' ')
 
 --[dd/mm/yyyy:hh:mm:ss -zzzz]
 parseOffsetDatetime :: Parser OffsetDatetime

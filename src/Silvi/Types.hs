@@ -15,6 +15,7 @@ module Silvi.Types
   ) where
 
 import Chronos.Types (Offset(..), OffsetDatetime(..))
+import Data.Text (Text)
 import Net.Types (IPv4(..))
 import Network.HTTP.Types.Method
 import Network.HTTP.Types.Status
@@ -38,7 +39,8 @@ data HttpProtocol = HTTP | HTTPS | FTP deriving (Show, Eq)
 type HttpProtocolVersion = HttpVersion
 
 -- | Type alias
-type Url = BC.ByteString
+newtype Url = Url { getUrl :: Text }
+  deriving (Show,Eq)
 
 -- | A single log entry from NCSA Common or Extended-formatted log. See: 
 --   http://publib.boulder.ibm.com/tividd/td/ITWSA/ITWSA_info45/en_US/HTML/guide/c-logs.html#combined
