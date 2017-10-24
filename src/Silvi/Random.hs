@@ -48,7 +48,7 @@ randomHttpProtocol = elements httpProtocols
 randomHttpProtocolVersion :: Gen HttpProtocolVersion
 randomHttpProtocolVersion = elements httpProtocolVersions
 
-randomUserident :: Gen Text
+randomUserident :: Gen (Maybe Text)
 randomUserident = elements userIdents
 
 randomObjSize :: Gen Int
@@ -103,8 +103,8 @@ httpStatuses :: [HttpStatus]
 httpStatuses = [status200,status204,status301,status400,status401,status403,status404,status405,status500,status503,status504]
 
 -- | List of sample Useridents.
-userIdents :: [Text]
-userIdents = ["-","userFoo","userBar","userBaz"]
+userIdents :: [Maybe Text]
+userIdents = Just <$> ["-","userFoo","userBar","userBaz"]
 
 -- | List of sample URLs.
 urls :: [Text]

@@ -23,6 +23,7 @@ module Silvi.Types
 import Chronos.Types (Offset(..), OffsetDatetime(..))
 import Data.Attoparsec.Text (Parser)
 import Data.Text (Text)
+import Net.IPv4 (fromOctets)
 import Net.Types (IPv4(..))
 import Network.HTTP.Types.Method
 import Network.HTTP.Types.Status
@@ -66,8 +67,8 @@ newtype Url = Url { getUrl :: Text }
 --   http://publib.boulder.ibm.com/tividd/td/ITWSA/ITWSA_info45/en_US/HTML/guide/c-logs.html#combined
 data LogEntry = LogEntry {
     ip        :: IPv4
-  , identity  :: Text
-  , userid    :: Text
+  , identity  :: Maybe Text
+  , userid    :: Maybe Text
   , timestamp :: OffsetDatetime
   , method    :: HttpMethod
   , url       :: Text

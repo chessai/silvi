@@ -34,6 +34,20 @@ import Network.HTTP.Types.Version
 import qualified Data.Attoparsec.Text as Atto
 import qualified Data.Text as T
 
+parseLogEntry :: Parser LogEntry
+parseLogEntry = LogEntry 
+  <$> parseIPv4
+  <*> (space *> parseUserident)
+  <*> (space *> parseUserident)
+  <*> (space *> parseOffsetDatetime)
+  <*> (space *> quote *> parseHttpMethod)
+  <*> (space *> parseUrl)
+  <*> (space *> parseHttpProtocol)
+  <*> (space *> parseHttpProtocolVersion <* quote)
+  <*> (space *> parseHttpStatus)
+  <*> (space *> parseObjSize)
+
+
 parseIPv4 :: Parser IPv4
 parseIPv4 = fmap fromOctets
       (decimal <* period)
@@ -74,8 +88,8 @@ parseUserident = do
   ident <- takeTill (== ' ')
   pure $ if ((T.length ident) == 1) && (T.head ident) == '-' then Nothing else Just ident
 
-parseByteSize :: Parser Int
-parseByteSize = decimal <* space
+parseObjSize :: Parser Int
+parseObjSize = decimal <* space
 
 parseQuote :: Parser (Maybe Text)
 parseQuote = fmap refTest (quote *> takeTill (== '"') <* quote)
