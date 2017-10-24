@@ -17,59 +17,46 @@ import Net.Types (IPv4)
 import Network.HTTP.Types.Method
 import Network.HTTP.Types.Status
 import Network.HTTP.Types.Version
-import Savage.Gen ( Gen(..), choose, oneof )
+import Savage.Gen ( Gen(..), choose, elements, oneof )
 
 randomHttpMethod :: Gen HttpMethod
-randomHttpMethod = do
-  hm <- oneof $ fmap pure httpMethods
-  pure hm
+randomHttpMethod = elements httpMethods
   
 randomHttpStatus :: Gen HttpStatus
-randomHttpStatus = do
-  hs <- oneof $ fmap pure httpStatuses
-  pure hs
+randomHttpStatus = elements httpStatuses
 
 randomHttpProtocolVersion :: Gen HttpProtocolVersion
-randomHttpProtocolVersion = do
-  hp <- oneof $ fmap pure httpProtocolVersions
-  pure hp
+randomHttpProtocolVersion = elements httpProtocolVersions
 
 randomIPv4 :: Gen IPv4
-randomIPv4 = do
-  d1 <- choose (0,255)
-  d2 <- choose (0,255)
-  d3 <- choose (0,255)
-  d4 <- choose (0,255)
-  pure (fromOctets d1 d2 d3 d4)
+randomIPv4 = fmap fromOctets
+      (choose (0,255))
+  <*> (choose (0,255))
+  <*> (choose (0,255))
+  <*> (choose (0,255))
 
 randomDatetime :: Gen Datetime
-randomDatetime = do
-  d <- randomDate
-  tod <- randomTimeOfDay
-  pure (Datetime d tod)
+randomDatetime = fmap Datetime
+      randomDate
+  <*> randomTimeOfDay
 
 randomTimeOfDay :: Gen TimeOfDay
-randomTimeOfDay = do
-  hour <- choose (1,24)
-  minute <- choose (0,59)
-  nanoseconds <- choose (0, 86399999999999)
-  pure (TimeOfDay hour minute nanoseconds)
+randomTimeOfDay = fmap TimeOfDay
+      (choose (1,24))
+  <*> (choose (0,59))
+  <*> (choose (0,86399999999999))
 
 randomDate :: Gen Date
-randomDate = do
-  d <- choose (1,31)
-  m <- choose (0,11)
-  y <- choose (1858,2176)
-  pure (Date (Year (y)) (Month (m)) (DayOfMonth (d)))
+randomDate = fmap Date
+      (Year <$> choose (1858,2176))
+  <*> (Month <$> choose (0,11))
+  <*> (DayOfMonth <$> choose (1858,2175))
+      
 
 randomOffsetDatetime :: Gen OffsetDatetime
-randomOffsetDatetime = do
-  dt <- randomDatetime
-  o  <- randomOffset
-  pure (OffsetDatetime dt o)
+randomOffsetDatetime = fmap OffsetDatetime
+      randomDatetime
+  <*> randomOffset
 
--- https://en.wikipedia.org/wiki/List_of_time_zone_abbreviations
 randomOffset :: Gen Offset
-randomOffset = do
-  o <- oneof $ fmap pure offsets
-  pure (Offset o)
+randomOffset = elements offsets

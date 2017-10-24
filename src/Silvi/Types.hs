@@ -14,7 +14,7 @@ module Silvi.Types
   , offsets
   ) where
 
-import Chronos.Types (OffsetDatetime(..))
+import Chronos.Types (Offset(..), OffsetDatetime(..))
 import Net.Types (IPv4(..))
 import Network.HTTP.Types.Method
 import Network.HTTP.Types.Status
@@ -74,5 +74,5 @@ httpStatuses = [status200,status204,status301,status400,status401,status403,stat
 
 -- | List of Time Zone Offsets. See: 
 --   https://en.wikipedia.org/wiki/List_of_time_zone_abbreviations
-offsets :: [Int]
-offsets = [100,200,300,330,400,430,500,530,545,600,630,700,800,845,900,930,1000,1030,1100,1200,1245,1300,1345,1400,0,(-100),(-200),(-230),(-300),(-330),(-400),(-500),(-600),(-700),(-800),(-900),(-930),(-1000),(-1100),(-1200)]
+offsets :: [Offset]
+offsets = fmap Offset [100,200,300,330,400,430,500,530,545,600,630,700,800,845,900,930,1000,1030,1100,1200,1245,1300,1345,1400,0,(-100),(-200),(-230),(-300),(-330),(-400),(-500),(-600),(-700),(-800),(-900),(-930),(-1000),(-1100),(-1200)]
