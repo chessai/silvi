@@ -73,7 +73,7 @@ parseHttpMethod = do
   <|> fail "Invalid HTTP Method"
 
 parseHttpStatus :: Parser HttpStatus
-parseHttpStatus = fmap toEnum decimal
+parseHttpStatus = toEnum <$> decimal
 
 parseHttpProtocol :: Parser HttpProtocol
 parseHttpProtocol = 
@@ -83,8 +83,8 @@ parseHttpProtocol =
   <|> fail "Invalid HTTP Protocol"
 
 parseHttpProtocolVersion :: Parser HttpProtocolVersion
-parseHttpProtocolVersion = fmap HttpVersion
-      decimal 
+parseHttpProtocolVersion = HttpVersion
+  <$> decimal 
   <*> (period *> decimal)
 
 parseUserident :: Parser (Maybe Text)

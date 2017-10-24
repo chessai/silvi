@@ -29,33 +29,33 @@ randomHttpProtocolVersion :: Gen HttpProtocolVersion
 randomHttpProtocolVersion = elements httpProtocolVersions
 
 randomIPv4 :: Gen IPv4
-randomIPv4 = fmap fromOctets
-      (choose (0,255))
+randomIPv4 = fromOctets
+  <$> (choose (0,255))
   <*> (choose (0,255))
   <*> (choose (0,255))
   <*> (choose (0,255))
 
 randomDatetime :: Gen Datetime
-randomDatetime = fmap Datetime
-      randomDate
+randomDatetime = Datetime
+  <$> randomDate
   <*> randomTimeOfDay
 
 randomTimeOfDay :: Gen TimeOfDay
-randomTimeOfDay = fmap TimeOfDay
-      (choose (1,24))
+randomTimeOfDay = TimeOfDay
+  <$> (choose (1,24))
   <*> (choose (0,59))
   <*> (choose (0,86399999999999))
 
 randomDate :: Gen Date
-randomDate = fmap Date
-      (Year <$> choose (1858,2176))
+randomDate = Date
+  <$> (Year <$> choose (1858,2176))
   <*> (Month <$> choose (0,11))
   <*> (DayOfMonth <$> choose (1858,2175))
       
 
 randomOffsetDatetime :: Gen OffsetDatetime
-randomOffsetDatetime = fmap OffsetDatetime
-      randomDatetime
+randomOffsetDatetime = OffsetDatetime
+  <$> randomDatetime
   <*> randomOffset
 
 randomOffset :: Gen Offset
