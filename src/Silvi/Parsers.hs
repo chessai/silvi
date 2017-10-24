@@ -2,10 +2,11 @@
 
 module Silvi.Parsers 
   ( parseIPv4
-  , parseTime
+  , parseOffsetDatetime
   , parseHttpMethod
-  --, parseHttpStatus
+  , parseHttpProtocol
   , parseHttpProtocolVersion
+  , parseHttpStatus
   ) where
 
 import Silvi.Types
@@ -54,18 +55,7 @@ parseIPv4 = fmap fromOctets
   <*> (decimal <* period)
   <*> (decimal <* period)
   <*> decimal
-  
---[dd/mm/yyyy:hh:mm:ss -zzzz]
-parseTime :: Parser OffsetDatetime
-parseTime = do
-  leftBracket
-  t <- parser_DmyHMSz (offsetFormat) (datetimeFormat)
-  rightBracket
-  pure t
-    where
-      offsetFormat = OffsetFormatColonOff
-      datetimeFormat = DatetimeFormat (Just '/') (Just ':') (Just ':')
-
+ 
 parseHttpMethod :: Parser HttpMethod
 parseHttpMethod = do
       (asciiCI "GET"     *> pure methodGet    )
@@ -79,21 +69,27 @@ parseHttpMethod = do
   <|> (asciiCI "PATCH"   *> pure methodPatch  )
   <|> fail "Invalid HTTP Method"
 
---parseHttpStatus :: Parser (Maybe HttpStatus)
---parseHttpStatus = (toEnum . validate) <$> decimal
---  where
---    validate d = if (d >= 200 && d < 506) then Just d else Nothing
+parseHttpStatus :: Parser HttpStatus
+parseHttpStatus = fmap toEnum decimal
 
 parseHttpProtocol :: Parser HttpProtocol
-parseHttpProtocol = do
+parseHttpProtocol = 
       (asciiCI "HTTPS" *> pure HTTPS)
   <|> (asciiCI "HTTP"  *> pure HTTP )
   <|> (asciiCI "FTP"   *> pure FTP  )
   <|> fail "Invalid HTTP Protocol"
 
 parseHttpProtocolVersion :: Parser HttpProtocolVersion
-parseHttpProtocolVersion = do
-  pv <- decimal
-  period
-  sv <- decimal
-  pure $ HttpVersion pv sv
+parseHttpProtocolVersion = fmap HttpVersion
+      decimal 
+  <*> (period *> decimal)
+
+--[dd/mm/yyyy:hh:mm:ss -zzzz]
+parseOffsetDatetime :: Parser OffsetDatetime
+parseOffsetDatetime = do
+  leftBracket
+  odt <- parser_DmyHMSz (offsetFormat) (datetimeFormat)
+  rightBracket
+  pure odt
+  where offsetFormat = OffsetFormatColonOff
+        datetimeFormat = DatetimeFormat (Just '/') (Just ':') (Just ':')
