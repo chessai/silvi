@@ -49,8 +49,8 @@ parseLogEntry = LogEntry
 
 
 parseIPv4 :: Parser IPv4
-parseIPv4 = fmap fromOctets
-      (decimal <* period)
+parseIPv4 = fromOctets
+  <$> (decimal <* period)
   <*> (decimal <* period)
   <*> (decimal <* period)
   <*> decimal

@@ -15,6 +15,6 @@
 [stackage-link]:
     https://www.stackage.org/package/silvi
 [license-badge]:
-    https://img.shields.io/badge/License-Apache%202.0-blue.svg
+    https://img.shields.io/badge/License-BSD3-blue.svg
 [license-link]:
-    https://spdx.org/licenses/Apache-2.0.html
+    https://spdx.org/licenses/BSD3.html
