@@ -11,7 +11,7 @@ module Silvi.Parsers
 
 import Silvi.Types
 
-import Chronos (parser_DmyHMSz)
+import Chronos
 import Chronos.Types 
   ( OffsetDatetime(..)
   , OffsetFormat(..)

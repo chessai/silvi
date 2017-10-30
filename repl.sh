@@ -5,8 +5,10 @@
 rm -rf dist
 
 ## jailbreaks
+# torsor
+cabal2nix https://github.com/andrewthad/torsor.git > nix/torsor.nix
 # chronos
-cabal2nix https://github.com/chessai/chronos.git > nix/chronos.nix
+cabal2nix https://github.com/andrewthad/chronos.git > nix/chronos.nix
 # http-types
 cabal2nix https://github.com/chessai/http-types.git > nix/http-types.nix
 # savage

@@ -1,6 +1,7 @@
 let
   # Disable tests for these packages
   dontCheckPackages = [
+    "http-types"
     "ip"
   ];
 
@@ -9,10 +10,15 @@ let
     "chronos"
     "http-types"
     "savage"
+    "torsor"
   ];
 
   # Disable haddocks for these packages
   dontHaddockPackages = [
+    "chronos"
+    "http-types"
+    "savage"
+    "torsor"
   ];
 
   config = {
