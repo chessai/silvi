@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Silvi.Random 
-  ( randomLogEntry
+  (
   ) where
 
 import Silvi.Types
@@ -14,7 +14,9 @@ import Net.Types (IPv4)
 import Network.HTTP.Types.Method
 import Network.HTTP.Types.Status
 import Network.HTTP.Types.Version
-import Savage.Gen ( Gen(..), choose, elements, oneof )
+import Savage
+import Savage.Randy (element, enum, int, word8)
+import Savage.Range (constantBounded)
 
 randomLogEntry :: Gen LogEntry
 randomLogEntry = LogEntry
@@ -29,36 +31,42 @@ randomLogEntry = LogEntry
   <*> randomHttpStatus
   <*> randomObjSize
 
+boundWord8 :: Range Word8
+boundWord8 = constantBounded
+
+boundObjSize :: Range Int
+boundObjSize = constantBounded
+
 randomIPv4 :: Gen IPv4
 randomIPv4 = fromOctets
-  <$> (choose (0,255))
-  <*> (choose (0,255))
-  <*> (choose (0,255))
-  <*> (choose (0,255))
+  <$> word8 boundWord8
+  <*> word8 boundWord8
+  <*> word8 boundWord8
+  <*> word8 boundWord8
 
 randomHttpMethod :: Gen HttpMethod
-randomHttpMethod = elements httpMethods
+randomHttpMethod = element httpMethods
   
 randomHttpStatus :: Gen HttpStatus
-randomHttpStatus = elements httpStatuses
+randomHttpStatus = element httpStatuses
 
 randomHttpProtocol :: Gen HttpProtocol
-randomHttpProtocol = elements httpProtocols
+randomHttpProtocol = element httpProtocols
 
 randomHttpProtocolVersion :: Gen HttpProtocolVersion
-randomHttpProtocolVersion = elements httpProtocolVersions
+randomHttpProtocolVersion = element httpProtocolVersions
 
 randomUserident :: Gen (Maybe Text)
-randomUserident = elements userIdents
+randomUserident = element userIdents
 
 randomObjSize :: Gen Int
-randomObjSize = choose (8,10000)
+randomObjSize = int constantBounded
 
 randomQuote :: Gen Text
-randomQuote = elements quotes
+randomQuote = element quotes
 
 randomUrl :: Gen Text
-randomUrl = elements urls
+randomUrl = element urls
 
 randomDatetime :: Gen Datetime
 randomDatetime = Datetime
@@ -67,15 +75,15 @@ randomDatetime = Datetime
 
 randomTimeOfDay :: Gen TimeOfDay
 randomTimeOfDay = TimeOfDay
-  <$> (choose (1,24))
-  <*> (choose (0,59))
-  <*> (choose (0,86399999999999))
+  <$> enum 0    24
+  <*> enum 0    59
+  <*> enum 0 59999
 
 randomDate :: Gen Date
 randomDate = Date
-  <$> (Year <$> choose (1858,2176))
-  <*> (Month <$> choose (0,11))
-  <*> (DayOfMonth <$> choose (1858,2175))
+  <$> (Year       <$> enum 1995 2100)
+  <*> (Month      <$> enum    0   11)
+  <*> (DayOfMonth <$> enum    1   31)
       
 
 randomOffsetDatetime :: Gen OffsetDatetime
@@ -84,7 +92,7 @@ randomOffsetDatetime = OffsetDatetime
   <*> randomOffset
 
 randomOffset :: Gen Offset
-randomOffset = elements offsets
+randomOffset = element offsets
 
 -- | List of HTTP Methods.
 httpMethods :: [HttpMethod]
