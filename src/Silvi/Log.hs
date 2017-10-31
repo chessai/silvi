@@ -11,6 +11,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE DefaultSignatures #-}
 
 module Silvi.Log where
 
@@ -26,19 +27,21 @@ import Control.Monad.Trans.State
 import Control.Monad.Trans.Writer
 import Data.Kind (Type)
 import Data.Proxy
---import Data.Semigroup (Semigroup((<>)))
+import Data.Semigroup (Semigroup((<>)))
 
 import Silvi.Tuples
 import Silvi.Types
 
---log :: (MRecord r m, Provider p)
+import qualified Data.SemiGroup as S
+
+--log :: (MonadRecord r m, Provider p)
 --    =>  RecordBuilder r
 --    -> p
 --    -> m ()
 --log rec p = do
 --  appendRecord $ doink p mempty $ rec
 
--- log :: (MRecord rm, Provider p)
+-- log :: (MonadRecord rm, Provider p)
 --     => RecordBuilder r 
 --     -> [Type] 
 --     -> m ()
@@ -65,14 +68,40 @@ type family LogUnit (k :: * -> *) where
   LogUnit (WriterT  w k) = LogUnit k
   LogUnit (LoggerT  l m) = l
 
-class (Monad m, Applicative m) => MLogger m where
+class (Monad m, Applicative m) => MonadLogger m where
   appendLog :: Log (LogUnit m) -> m ()
-
+  
 newtype RecordBuilder a = RecordBuilder { fromRecordBuilder :: a } deriving (Show, Functor)
 empty = RecordBuilder ()
 
-class (Monad m) => MRecord d m where
+class (Monad m) => MonadRecord d m where
   appendRecord :: RecordBuilder d -> m ()
+
+  default appendRecord :: (MonadLogger m, LogBuilder d m) => RecordBuilder d -> m ()
+  appendRecord d = do
+    l <- buildLog d
+    appendLog l
+
+instance (Monad m, MonadRecord d m) => MonadRecord d (ExceptT e m) where
+    appendRecord = lift . appendRecord
+
+instance (Monad m, MonadRecord d m) => MonadRecord d (ListT m) where
+    appendRecord = lift . appendRecord
+
+instance (Monad m, MonadRecord d m) => MonadRecord d (MaybeT m) where
+    appendRecord = lift . appendRecord
+
+instance (Monad m, MonadRecord d m) => MonadRecord d (ReaderT s m) where
+    appendRecord = lift . appendRecord
+
+instance (Monad m, Monoid w, MonadRecord d m) => MonadRecord d (RWST r w s m) where
+    appendRecord = lift . appendRecord
+
+instance (Monad m, MonadRecord d m) => MonadRecord d (StateT s m) where
+    appendRecord = lift . appendRecord
+
+instance (Monad m, Monoid w, MonadRecord d m) => MonadRecord d (WriterT w m) where
+    appendRecord = lift . appendRecord
 
 class LogBuilderProto a m b where
   buildLogProto :: RecordBuilder a -> m (Log b)
@@ -107,13 +136,16 @@ data Provider b = Provider { recBase :: b
                            }
 
 type family ProviderOf a :: * where
+  ProviderOf IPv4           = IPv4
   ProviderOf OffsetDatetime = OffsetDatetime
   ProviderOf HttpMethod     = HttpMethod
   ProviderOf HttpStatus     = HttpStatus
   ProviderOf HttpProtocol   = HttpProtocolVersion
   ProviderOf Url            = Url
+  ProviderOf UserId         = UserId
+  ProviderOf ObjSize        = ObjSize
   ProviderOf LogLevel       = LogLevel
-
+  
 class ProvGetter b m where
   getProv :: m (Provider b)
 
@@ -124,13 +156,13 @@ runLoggerT _ = runRawLoggerT
 
 runLogger d = runIdentity . runLoggerT d
 
-instance (Applicative m, Monad m) => MLogger (LoggerT l m) where
+instance (Applicative m, Monad m) => MonadLogger (LoggerT l m) where
   appendLog _ = pure ()
 
 instance MonadTrans (LoggerT l) where
   lift = LoggerT
 
-instance Monad m => MRecord d (LoggerT l m) where
+instance Monad m => MonadRecord d (LoggerT l m) where
   appendRecord _ = pure ()
 
 data LogLevel = Debug     -- ^ Debug logs
@@ -143,3 +175,23 @@ data LogLevel = Debug     -- ^ Debug logs
               | Panic     -- ^ System is unusable
               | Other     -- ^ Other
               deriving (Eq, Show, Read)
+
+data 
+newtype Format a = Format { runFormatter :: (Monoid b) => Log a ->  }
+
+mapFormat f (Format a) = Format (f a)
+
+class FormatBuilder a b where
+  buildFormat :: a -> Format b
+
+(<:>) :: (FormatBuilder a c, FormatBuilder b c) => a -> b -> Format c
+(<:>) a b = concatFormats (buildFormat a) (buildFormat b)
+
+concatFormat :: Format a -> Format a -> Format a
+concatFormat (Format f) (Format g) = (\s -> f s <> g s)
+
+(<++>) :: Format a -> Format a -> Format a
+(<++>) = concatFormat
+
+instance (a ~ b) => FormatBuilder (Format a) b where
+  buildFormat = id

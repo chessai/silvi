@@ -10,6 +10,8 @@ module Silvi.Types
   , HttpProtocol(..)
   , HttpProtocolVersion
   , Url
+  , UserId(..)
+  , ObjSize(..)
   , NcsaLog(..)
   , IPv4(..)
   , fromOctets
