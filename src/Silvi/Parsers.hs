@@ -1,12 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Silvi.Parsers 
-  ( parseIPv4
-  , parseOffsetDatetime
-  , parseHttpMethod
-  , parseHttpProtocol
-  , parseHttpProtocolVersion
-  , parseHttpStatus
+  (
   ) where
 
 import Silvi.Types
@@ -22,20 +17,29 @@ import Data.Attoparsec.Text
   , decimal
   , Parser
   , takeTill)
-import Data.Foldable (traverse_)
 import Data.Maybe
 import Data.Text (Text)
-import Data.Word
-import Net.IPv4 (fromOctets)
-import Net.Types (IPv4)
 import Network.HTTP.Types.Method
 import Network.HTTP.Types.Status
 import Network.HTTP.Types.Version
 import qualified Data.Attoparsec.Text as Atto
 import qualified Data.Text as T
 
-parseLogEntry :: Parser LogEntry
-parseLogEntry = LogEntry 
+-- | Useful aliases for parsing
+colon, dash, dot, fullStop, leftBracket, period, quote, rightBracket, slash, space :: Parser Char
+colon        = Atto.char ':'
+dash         = Atto.char '-'
+dot          = period
+fullStop     = period
+leftBracket  = Atto.char '['
+period       = Atto.char '.'
+quote        = Atto.char '"'
+rightBracket = Atto.char ']'
+slash        = Atto.char '/'
+space        = Atto.char ' '
+
+parseNcsa :: Parser NcsaLog
+parseNcsa = NcsaLog
   <$> parseIPv4
   <*> (space *> parseUserident)
   <*> (space *> parseUserident)

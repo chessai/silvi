@@ -4,13 +4,9 @@ module Silvi.Random
   (
   ) where
 
-import Silvi.Types
-
 import Chronos.Types
 import Data.Text (Text)
 import Data.Word (Word8)
-import Net.IPv4 (fromOctets)
-import Net.Types (IPv4)
 import Network.HTTP.Types.Method
 import Network.HTTP.Types.Status
 import Network.HTTP.Types.Version
@@ -18,8 +14,10 @@ import Savage
 import Savage.Randy (element, enum, int, word8)
 import Savage.Range (constantBounded)
 
-randomLogEntry :: Gen LogEntry
-randomLogEntry = LogEntry
+import Silvi.Types
+
+apache :: Gen NcsaLog
+apache = NcsaLog
   <$> randomIPv4
   <*> randomUserident
   <*> randomUserident
@@ -31,18 +29,15 @@ randomLogEntry = LogEntry
   <*> randomHttpStatus
   <*> randomObjSize
 
-boundWord8 :: Range Word8
-boundWord8 = constantBounded
-
-boundObjSize :: Range Int
-boundObjSize = constantBounded
+--sysLog :: Gen SysLog
+--sysLog = SysLog 
 
 randomIPv4 :: Gen IPv4
 randomIPv4 = fromOctets
-  <$> word8 boundWord8
-  <*> word8 boundWord8
-  <*> word8 boundWord8
-  <*> word8 boundWord8
+  <$> word8 constantBounded
+  <*> word8 constantBounded
+  <*> word8 constantBounded
+  <*> word8 constantBounded
 
 randomHttpMethod :: Gen HttpMethod
 randomHttpMethod = element httpMethods
@@ -96,7 +91,7 @@ randomOffset = element offsets
 
 -- | List of HTTP Methods.
 httpMethods :: [HttpMethod]
-httpMethods = [methodGet,methodPost,methodHead,methodPut,methodDelete,methodTrace    ,methodConnect,methodOptions,methodPatch]
+httpMethods = [methodGet,methodPost,methodHead,methodPut,methodDelete,methodTrace,methodConnect,methodOptions,methodPatch]
 
 -- | List of HTTP Protocols.
 httpProtocols :: [HttpProtocol]
