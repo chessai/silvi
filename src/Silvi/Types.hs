@@ -10,22 +10,14 @@ module Silvi.Types
   , HttpProtocol(..)
   , HttpProtocolVersion
   , Url
-  , Log(..)
   , NcsaLog(..)
   , IPv4(..)
   , fromOctets
   , Word8
+  , OffsetDatetime(..)
   ) where
 
 import Chronos.Types (Offset(..), OffsetDatetime(..))
-import Control.Applicative
-import Control.Monad.Trans.Except
-import Control.Monad.Trans.List
-import Control.Monad.Trans.Maybe
-import Control.Monad.Trans.Reader
-import Control.Monad.Trans.RWS
-import Control.Monad.Trans.State
-import Control.Monad.Trans.Writer
 
 import Data.Text (Text)
 import Data.Word (Word8)
@@ -92,26 +84,14 @@ data NcsaLog = NcsaLog {
 --  , platform  :: Maybe OSResult
 } deriving (Show)
 
-newtype Log a = Log { fromLog :: a } deriving (Show, Functor)
-
-type family LogFormat (m :: * -> *) where
-  LogFormat (ExceptT  e m) = LogFormat m
-  LogFormat (ListT      m) = LogFormat m
-  LogFormat (MaybeT     m) = LogFormat m
-  LogFormat (ReaderT  r m) = LogFormat m
-  LogFormat (RWST r w s m) = LogFormat m
-  LogFormat (StateT   s m) = LogFormat m
-  LogFormat (WriterT  w m) = LogFormat m
-
-data LogLevel = Debug     -- ^ Debug logs
-              | Info      -- ^ Information
-              | Notice    -- ^ Normal runtime conditions
-              | Warning   -- ^ General warning(s)
-              | Error     -- ^ General error(s)
-              | Critical  -- ^ Severe situation(s)
-              | Alert     -- ^ Take immediate action
-              | Panic     -- ^ System is unusable
-              | Other     -- ^ Other
-              deriving (Eq, Show, Read)
-
-
+--data SysLog = SysLog {
+--    timestamp :: OffsetDatetime
+--  , loghost   :: UserId
+--  , app       :: Text
+--  , pid       :: Int
+--  , syslogid  :: Int
+--  , facility  :: Text
+--  , level     :: LogLevel
+--  , msgId     :: Text
+--  , msg       :: Text
+--}

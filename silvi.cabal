@@ -37,11 +37,13 @@ library
                          , http-types
                          , ip
                          , monad-logger
+                         , mtl
                          , savage
                          , text
                          , transformers
                      --  , uaparser
     exposed-modules:       Silvi
+                         , Silvi.Log
                          , Silvi.Parsers
                          , Silvi.Random
                          , Silvi.Types
