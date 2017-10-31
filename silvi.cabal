@@ -33,11 +33,14 @@ library
                          , attoparsec
                          , bytestring
                          , chronos
+                         , fast-logger
                          , http-types
                          , ip
+                         , monad-logger
                          , savage
                          , text
-                         , ua-parser
+                         , transformers
+                     --  , uaparser
     exposed-modules:       Silvi
                          , Silvi.Parsers
                          , Silvi.Random
