@@ -5,11 +5,11 @@
 {-# LANGUAGE TypeFamilies          #-}
 
 module Silvi.Types 
-  ( HttpMethod
-  , HttpStatus
+  ( HttpMethod(..)
+  , HttpStatus(..)
   , HttpProtocol(..)
-  , HttpProtocolVersion
-  , Url
+  , HttpProtocolVersion(..)
+  , Url(..)
   , UserId(..)
   , ObjSize(..)
   , NcsaLog(..)

@@ -13,9 +13,11 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE DefaultSignatures #-}
 
-module Silvi.Log where
-
-import Control.Applicative
+module Silvi.Log
+  ( runLogger
+  , empty
+  ) where
+import Control.Applicative hiding (empty)
 import Control.Monad.Identity
 import Control.Monad.Trans
 import Control.Monad.Trans.Except
@@ -25,34 +27,10 @@ import Control.Monad.Trans.Reader
 import Control.Monad.Trans.RWS
 import Control.Monad.Trans.State
 import Control.Monad.Trans.Writer
-import Data.Kind (Type)
-import Data.Proxy
-import Data.Semigroup (Semigroup((<>)))
 
 import Silvi.Tuples
 import Silvi.Types
 
-import qualified Data.Semigroup as S
-
---log :: (MonadRecord r m, Provider p)
---    =>  RecordBuilder r
---    -> p
---    -> m ()
---log rec p = do
---  appendRecord $ doink p mempty $ rec
-
--- log :: (MonadRecord rm, Provider p)
---     => RecordBuilder r 
---     -> [Type] 
---     -> m ()
--- log rec ts = do
--- appendRecord $ doink <$> ts $ rec
---
---
--- doink :: (a ~ ProviderOf b) => b -> a -> RecordBuilder as -> RecordBuilder (Provider b, as)
--- doink b a = fmap (Provider b a, )
---
---
 
 newtype Log a = Log { fromLog :: a } deriving (Show, Functor)
 
@@ -72,7 +50,6 @@ class (Monad m, Applicative m) => MonadLogger m where
   appendLog :: Log (LogUnit m) -> m ()
   
 newtype RecordBuilder a = RecordBuilder { fromRecordBuilder :: a } deriving (Show, Functor)
-empty = RecordBuilder ()
 
 class (Monad m) => MonadRecord d m where
   appendRecord :: RecordBuilder d -> m ()
@@ -154,7 +131,11 @@ newtype LoggerT l m a = LoggerT { runRawLoggerT :: m a } deriving (Monad, MonadI
 runLoggerT :: l -> LoggerT (MapRTuple Provider (Tuple2RTuple l)) m a -> m a
 runLoggerT _ = runRawLoggerT
 
+runLogger :: l -> LoggerT (MapRTuple Provider (Tuple2RTuple l)) Identity c -> c
 runLogger d = runIdentity . runLoggerT d
+
+empty :: (Monad m) => m ()
+empty = pure ()
 
 instance (Applicative m, Monad m) => MonadLogger (LoggerT l m) where
   appendLog _ = pure ()
@@ -175,34 +156,3 @@ data LogLevel = Debug     -- ^ Debug logs
               | Panic     -- ^ System is unusable
               | Other     -- ^ Other
               deriving (Eq, Show, Read)
-
-data V = Full | Chill V V | Empty
-
-instance Monoid V where
-  mempty  = Empty
-  mappend = (S.<>)
-
-instance Semigroup V where
-  x <> y = chill x y
-
-chill :: V -> V -> V
-chill x y = Chill x y
-
-newtype Format a = Format { runFormatter :: Log a -> V }
-
-mapFormat f (Format a) = Format (f a)
-
-class FormatBuilder a b where
-  buildFormat :: a -> Format b
-
-(<:>) :: (FormatBuilder a c, FormatBuilder b c) => a -> b -> Format c
-(<:>) a b = concatFormats (buildFormat a) (buildFormat b)
-
-concatFormats :: Format a -> Format a -> Format a
-concatFormats (Format f) (Format g) = Format (f <> g)
-
-(<++>) :: Format a -> Format a -> Format a
-(<++>) = concatFormats
-
-instance (a ~ b) => FormatBuilder (Format a) b where
-  buildFormat = id
