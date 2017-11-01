@@ -32,7 +32,7 @@ import Data.Semigroup (Semigroup((<>)))
 import Silvi.Tuples
 import Silvi.Types
 
-import qualified Data.SemiGroup as S
+import qualified Data.Semigroup as S
 
 --log :: (MonadRecord r m, Provider p)
 --    =>  RecordBuilder r
@@ -176,8 +176,19 @@ data LogLevel = Debug     -- ^ Debug logs
               | Other     -- ^ Other
               deriving (Eq, Show, Read)
 
-data 
-newtype Format a = Format { runFormatter :: (Monoid b) => Log a ->  }
+data V = Full | Chill V V | Empty
+
+instance Monoid V where
+  mempty  = Empty
+  mappend = (S.<>)
+
+instance Semigroup V where
+  x <> y = chill x y
+
+chill :: V -> V -> V
+chill x y = Chill x y
+
+newtype Format a = Format { runFormatter :: Log a -> V }
 
 mapFormat f (Format a) = Format (f a)
 
@@ -187,11 +198,11 @@ class FormatBuilder a b where
 (<:>) :: (FormatBuilder a c, FormatBuilder b c) => a -> b -> Format c
 (<:>) a b = concatFormats (buildFormat a) (buildFormat b)
 
-concatFormat :: Format a -> Format a -> Format a
-concatFormat (Format f) (Format g) = (\s -> f s <> g s)
+concatFormats :: Format a -> Format a -> Format a
+concatFormats (Format f) (Format g) = Format (f <> g)
 
 (<++>) :: Format a -> Format a -> Format a
-(<++>) = concatFormat
+(<++>) = concatFormats
 
 instance (a ~ b) => FormatBuilder (Format a) b where
   buildFormat = id
