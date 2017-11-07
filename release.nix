@@ -7,10 +7,11 @@ let
 
   # Jailbreak these packages
   doJailbreakPackages = [
-    "chronos"
+  #    "chronos"
     "http-types"
-    "savage"
+  #  "savage"
     "torsor"
+    "ip"
   ];
 
   # Disable haddocks for these packages

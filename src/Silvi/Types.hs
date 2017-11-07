@@ -1,9 +1,3 @@
-{-# LANGUAGE DeriveFunctor         #-}
-{-# LANGUAGE KindSignatures        #-}
-{-# LANGUAGE OverloadedStrings     #-}
-{-# LANGUAGE PartialTypeSignatures #-}
-{-# LANGUAGE TypeFamilies          #-}
-
 module Silvi.Types 
   ( HttpMethod(..)
   , HttpStatus(..)
@@ -14,8 +8,6 @@ module Silvi.Types
   , ObjSize(..)
   , NcsaLog(..)
   , IPv4(..)
-  , fromOctets
-  , Word8
   , OffsetDatetime(..)
   ) where
 
@@ -23,7 +15,6 @@ import Chronos.Types (Offset(..), OffsetDatetime(..))
 
 import Data.Text (Text)
 import Data.Word (Word8)
-import Net.IPv4 (fromOctets)
 import Net.Types (IPv4(..))
 import Network.HTTP.Types.Method
 import Network.HTTP.Types.Status
@@ -85,15 +76,3 @@ data NcsaLog = NcsaLog {
 --  , browser   :: Maybe UAResult
 --  , platform  :: Maybe OSResult
 } deriving (Show)
-
---data SysLog = SysLog {
---    timestamp :: OffsetDatetime
---  , loghost   :: UserId
---  , app       :: Text
---  , pid       :: Int
---  , syslogid  :: Int
---  , facility  :: Text
---  , level     :: LogLevel
---  , msgId     :: Text
---  , msg       :: Text
---}

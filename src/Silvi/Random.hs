@@ -7,6 +7,7 @@ module Silvi.Random
 import Chronos.Types
 import Data.Text (Text)
 import Data.Word (Word8)
+import Net.IPv4 (ipv4)
 import Network.HTTP.Types.Method
 import Network.HTTP.Types.Status
 import Network.HTTP.Types.Version
@@ -29,11 +30,8 @@ apache = NcsaLog
   <*> randomHttpStatus
   <*> randomObjSize
 
---sysLog :: Gen SysLog
---sysLog = SysLog 
-
 randomIPv4 :: Gen IPv4
-randomIPv4 = fromOctets
+randomIPv4 = ipv4
   <$> word8 constantBounded
   <*> word8 constantBounded
   <*> word8 constantBounded

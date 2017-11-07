@@ -19,6 +19,7 @@ import Data.Attoparsec.Text
   , takeTill)
 import Data.Maybe
 import Data.Text (Text)
+import Net.IPv4 (ipv4)
 import Network.HTTP.Types.Method
 import Network.HTTP.Types.Status
 import Network.HTTP.Types.Version
@@ -53,7 +54,7 @@ parseNcsa = NcsaLog
 
 
 parseIPv4 :: Parser IPv4
-parseIPv4 = fromOctets
+parseIPv4 = ipv4
   <$> (decimal <* period)
   <*> (decimal <* period)
   <*> (decimal <* period)
