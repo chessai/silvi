@@ -27,6 +27,7 @@ import           Data.Exists
   ( Exists(..)
   , Reify(..)
   , Sing
+  , ShowForall(..)
   )
 import           Data.Kind (Type)
 import           Data.Text (Text)
@@ -59,6 +60,17 @@ data Value :: Field -> Type where
   ValueObjSize :: Int -> Value 'FieldObjSize
   ValueIp :: IPv4 -> Value 'FieldIp
   ValueTimestamp :: OffsetDatetime -> Value 'FieldTimestamp
+
+instance ShowForall Value where
+  showsPrecForall p (ValueHttpMethod x) = showParen (p > 10) $ showString "ValueHttpMethod" . showsPrec 11 x
+  showsPrecForall p (ValueHttpStatus x) = showParen (p > 10) $ showString "ValueHttpStatus" . showsPrec 11 x
+  showsPrecForall p (ValueHttpProtocol x) = showParen (p > 10) $ showString "ValueHttpProtocol" . showsPrec 11 x
+  showsPrecForall p (ValueHttpProtocolVersion x) = showParen (p > 10) $ showString "ValueHttpProtocolVersion" . showsPrec 11 x
+  showsPrecForall p (ValueUrl x) = showParen (p > 10) $ showString "ValueUrl" . showsPrec 11 x
+  showsPrecForall p (ValueUserId x) = showParen (p > 10) $ showString "ValueUserId" . showsPrec 11 x
+  showsPrecForall p (ValueObjSize x) = showParen (p > 10) $ showString "ValueObjSize" . showsPrec 11 x
+  showsPrecForall p (ValueIp x) = showParen (p > 10) $ showString "ValueIp" . showsPrec 11 x
+  showsPrecForall p (ValueTimestamp x) = showParen (p > 10) $ showString "ValueTimestamp" . showsPrec 11 x
 
 data SingField :: Field -> Type where
   SingHttpMethod          :: SingField 'FieldHttpMethod
