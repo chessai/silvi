@@ -45,7 +45,6 @@ library
                          , transformers
                      --  , uaparser
     exposed-modules:       Silvi
-                         , Silvi.Builder
                          , Silvi.Parsers
                          , Silvi.Random
                          , Silvi.Record

@@ -13,7 +13,6 @@ module Silvi.Random
 
 import Chronos.Types
 import Data.Exists (Exists(..), Reify(..))
-import Data.Functor.Identity (Identity(..))
 import Data.Text (Text)
 import Data.Word (Word8)
 import Net.IPv4 (ipv4)
@@ -21,7 +20,6 @@ import Network.HTTP.Types.Method
 import Network.HTTP.Types.Status
 import Network.HTTP.Types.Version
 import Savage
-import Savage.Internal.Gen (MonadGen(..))
 import Savage.Randy (element, enum, int, word8)
 import Savage.Range (constantBounded)
 import Silvi.Types

@@ -14,31 +14,24 @@
 
 module Silvi.Record 
   ( rmap
+  , rtraverse
   , NcsaLog
   , TestLog
   , Field(..)
   , Value(..)
   , SingField(..)
-  , rtraverse
   ) where
 
-import           Chronos.Types 
-  ( Offset(..)
-  , OffsetDatetime(..)
-  )
+import           Chronos.Types ( OffsetDatetime(..) ) 
 import           Data.Exists
   ( Exists(..)
   , Reify(..)
   , Sing
-  , Unreify(..)
   )
 import           Data.Kind (Type)
 import           Data.Text (Text)
 import           GHC.Generics (Generic)
 import           Net.Types (IPv4)
-import           Network.HTTP.Types.Method
-import           Network.HTTP.Types.Status
-import           Network.HTTP.Types.Version
 import           Silvi.Types
 import           Topaz.Rec (Rec(..), traverse)
 import qualified Topaz.Rec as Topaz
