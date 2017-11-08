@@ -3,16 +3,19 @@
 {-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeApplications #-}
 
 module Silvi.Random 
   ( rand
   , randLogExplicit
-  --, randLog
+  , randLog
   ) where
 
 import Chronos.Types
-import Data.Exists (Exists(..), Reify(..))
+import Data.Exists (SingList(..),Exists(..), Reify(..))
 import Data.Text (Text)
 import Data.Word (Word8)
 import Net.IPv4 (ipv4)
@@ -20,12 +23,11 @@ import Network.HTTP.Types.Method
 import Network.HTTP.Types.Status
 import Network.HTTP.Types.Version
 import Savage
-import Savage.Randy (element, enum, int, word8)
+import Savage.Randy (element, enum, int, print, word8)
 import Savage.Range (constantBounded)
 import Silvi.Types
 import Silvi.Record (rmap, rtraverse, NcsaLog, TestLog, Field(..), Value(..), SingField(..))
 import Topaz.Rec (fromSingList, Rec(..))
-import qualified Topaz.Rec as Topaz
 
 rand :: SingField a -> Gen (Value a)
 rand = \case
@@ -39,8 +41,8 @@ rand = \case
   SingIp -> fmap ValueIp randomIPv4
   SingTimestamp -> fmap ValueTimestamp randomOffsetDatetime
 
---randLog :: Reify as => Gen (Rec Value as)
---randLog = randLogExplicit ( (fromSingList as))
+randLog :: forall as. (Reify as) => Gen (Rec Value as)
+randLog = randLogExplicit (fromSingList (reify :: SingList as))
 
 randLogExplicit :: Rec SingField rs -> Gen (Rec Value rs)
 randLogExplicit = rtraverse rand
