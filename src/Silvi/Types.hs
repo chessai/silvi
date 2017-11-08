@@ -1,3 +1,11 @@
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE GADTs #-}
+{-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeOperators #-}
+
 module Silvi.Types 
   ( HttpMethod(..)
   , HttpStatus(..)
@@ -6,19 +14,19 @@ module Silvi.Types
   , Url(..)
   , UserId(..)
   , ObjSize(..)
-  , NcsaLog(..)
   , IPv4(..)
   , OffsetDatetime(..)
   ) where
 
-import Chronos.Types (Offset(..), OffsetDatetime(..))
-
-import Data.Text (Text)
-import Data.Word (Word8)
-import Net.Types (IPv4(..))
-import Network.HTTP.Types.Method
-import Network.HTTP.Types.Status
-import Network.HTTP.Types.Version
+import           Chronos.Types 
+  ( Offset(..)
+  , OffsetDatetime(..)
+  )
+import           Data.Text (Text)
+import           Net.Types (IPv4(..))
+import           Network.HTTP.Types.Method
+import           Network.HTTP.Types.Status
+import           Network.HTTP.Types.Version
 
 -- | Type alias for Netowrk.HTTP.Types.Method, renamed
 --   to be more explicit.

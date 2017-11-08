@@ -8,21 +8,21 @@ import           Data.ByteString.Builder
 import           Data.Monoid
 import           Silvi.Types
 
-buildHttpMethod :: HttpMethod -> Builder
-buildHttpMethod = byteString
+--buildHttpMethod :: HttpMethod -> Builder
+--buildHttpMethod = byteString
+--
+--buildHttpStatus :: HttpStatus -> Builder
+--buildHttpStatus (HttpStatus i b) = 
+--     (intDec i) 
+--  <> (byteString b)
 
-buildHttpStatus :: HttpStatus -> Builder
-buildHttpStatus (HttpStatus i b) = 
-     (intDec i) 
-  <> (byteString b)
+--buildHttpProtocol :: HttpProtocol -> Builder
+--buildHttpProtocol = stringUtf8 . show
 
-buildHttpProtocol :: HttpProtocol -> Builder
-buildHttpProtocol = stringUtf8 . show
-
-buildHttpProtocolVersion :: HttpProtocolVersion -> Builder
-buildHttpProtocolVersion (HttpProtocolVersion majour minour) =
-     (intDec majour)
-  <> (intDec minour)
+--buildHttpProtocolVersion :: HttpProtocolVersion -> Builder
+--buildHttpProtocolVersion (HttpProtocolVersion majour minour) =
+--     (intDec majour)
+--  <> (intDec minour)
 
 --buildUrl :: Url -> Builder
 --buildUrl (Url u) = 

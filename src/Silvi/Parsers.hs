@@ -39,18 +39,18 @@ rightBracket = Atto.char ']'
 slash        = Atto.char '/'
 space        = Atto.char ' '
 
-parseNcsa :: Parser NcsaLog
-parseNcsa = NcsaLog
-  <$> parseIPv4
-  <*> (space *> parseUserident)
-  <*> (space *> parseUserident)
-  <*> (space *> parseOffsetDatetime)
-  <*> (space *> quote *> parseHttpMethod)
-  <*> (space *> parseUrl)
-  <*> (space *> parseHttpProtocol)
-  <*> (space *> parseHttpProtocolVersion <* quote)
-  <*> (space *> parseHttpStatus)
-  <*> (space *> parseObjSize)
+--parseNcsa :: Parser NcsaLog
+--parseNcsa = NcsaLog
+--  <$> parseIPv4
+--  <*> (space *> parseUserident)
+--  <*> (space *> parseUserident)
+--  <*> (space *> parseOffsetDatetime)
+--  <*> (space *> quote *> parseHttpMethod)
+--  <*> (space *> parseUrl)
+--  <*> (space *> parseHttpProtocol)
+--  <*> (space *> parseHttpProtocolVersion <* quote)
+--  <*> (space *> parseHttpStatus)
+--  <*> (space *> parseObjSize)
 
 
 parseIPv4 :: Parser IPv4
