@@ -1,13 +1,18 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Silvi.Random 
-  (
+  ( rand
+  , randLogExplicit
+  --, randLog
   ) where
 
 import Chronos.Types
+import Data.Exists (Exists(..), Reify(..))
 import Data.Functor.Identity (Identity(..))
 import Data.Text (Text)
 import Data.Word (Word8)
@@ -19,25 +24,28 @@ import Savage
 import Savage.Internal.Gen (MonadGen(..))
 import Savage.Randy (element, enum, int, word8)
 import Savage.Range (constantBounded)
-
 import Silvi.Types
-import Silvi.Record (rmap, Field(..), SingField(..))
+import Silvi.Record (rmap, rtraverse, NcsaLog, TestLog, Field(..), Value(..), SingField(..))
+import Topaz.Rec (fromSingList, Rec(..))
+import qualified Topaz.Rec as Topaz
 
---rand :: SingField (v :: Field) -> Gen Field
---rand (SingIPv4) = pure $ runIdentity (liftGen randomIPv4)
+rand :: SingField a -> Gen (Value a)
+rand = \case
+  SingHttpMethod -> fmap ValueHttpMethod randomHttpMethod
+  SingHttpStatus -> fmap ValueHttpStatus randomHttpStatus
+  SingHttpProtocol -> fmap ValueHttpProtocol randomHttpProtocol
+  SingHttpProtocolVersion -> fmap ValueHttpProtocolVersion randomHttpProtocolVersion
+  SingUrl -> fmap ValueUrl randomUrl
+  SingUserId -> fmap ValueUserId randomUserident
+  SingObjSize -> fmap ValueObjSize randomObjSize
+  SingIp -> fmap ValueIp randomIPv4
+  SingTimestamp -> fmap ValueTimestamp randomOffsetDatetime
 
---apache :: Gen NcsaLog
---apache = NcsaLog
---  <$> randomIPv4
---  <*> randomUserident
---  <*> randomUserident
---  <*> randomOffsetDatetime
---  <*> randomHttpMethod
---  <*> randomUrl
---  <*> randomHttpProtocol
---  <*> randomHttpProtocolVersion
---  <*> randomHttpStatus
---  <*> randomObjSize
+--randLog :: Reify as => Gen (Rec Value as)
+--randLog = randLogExplicit ( (fromSingList as))
+
+randLogExplicit :: Rec SingField rs -> Gen (Rec Value rs)
+randLogExplicit = rtraverse rand
 
 randomIPv4 :: Gen IPv4
 randomIPv4 = ipv4
@@ -58,7 +66,7 @@ randomHttpProtocol = element httpProtocols
 randomHttpProtocolVersion :: Gen HttpProtocolVersion
 randomHttpProtocolVersion = element httpProtocolVersions
 
-randomUserident :: Gen (Maybe Text)
+randomUserident :: Gen Text
 randomUserident = element userIdents
 
 randomObjSize :: Gen Int
@@ -113,8 +121,8 @@ httpStatuses :: [HttpStatus]
 httpStatuses = [status200,status204,status301,status400,status401,status403,status404,status405,status500,status503,status504]
 
 -- | List of sample Useridents.
-userIdents :: [Maybe Text]
-userIdents = Just <$> ["-","userFoo","userBar","userBaz"]
+userIdents :: [Text]
+userIdents = ["-","userFoo","userBar","userBaz"]
 
 -- | List of sample URLs.
 urls :: [Text]

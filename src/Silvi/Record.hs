@@ -3,29 +3,23 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeInType #-}
 {-# LANGUAGE TypeOperators #-}
 
 module Silvi.Record 
-  ( -- * Record stuff
-    rmap
+  ( rmap
+  , NcsaLog
+  , TestLog
   , Field(..)
+  , Value(..)
   , SingField(..)
-
-    -- * unit Log types
- -- , HttpMethod(..)
- --  , HttpStatus(..)
- --  , HttpProtocol(..)
- --  , HttpProtocolVersion(..)
- --  , Url(..)
- --  , UserId(..)
- --  , ObjSize(..)
- --  , IPv4(..)
- -- , OffsetDatetime(..)
+  , rtraverse
   ) where
 
 import           Chronos.Types 
@@ -33,7 +27,8 @@ import           Chronos.Types
   , OffsetDatetime(..)
   )
 import           Data.Exists
-  ( Reify(..)
+  ( Exists(..)
+  , Reify(..)
   , Sing
   , Unreify(..)
   )
@@ -44,80 +39,89 @@ import           Net.Types (IPv4)
 import           Network.HTTP.Types.Method
 import           Network.HTTP.Types.Status
 import           Network.HTTP.Types.Version
+import           Silvi.Types
 import           Topaz.Rec (Rec(..), traverse)
 import qualified Topaz.Rec as Topaz
+
+-- | Different types present in logs.
+data Field
+  = FieldHttpMethod          -- ^ More explicit name for Network.HTTP.Types.Method
+  | FieldHttpStatus          -- ^ More explicit name for Network.HTTP.Types.Status
+  | FieldHttpProtocol        -- ^ The HTTP Protocol used
+  | FieldHttpProtocolVersion -- ^ More explicit name for Network.HTTP.Types.Version
+  | FieldUrl                 -- ^ a url, e.g. "https://hackage.haskell.org"
+  | FieldUserId              -- ^ userId as Text
+  | FieldObjSize             -- ^ usually requested resource size
+  | FieldIp                  -- ^ FieldIp present in log
+  | FieldTimestamp           -- ^ Timestamp
+  deriving (Bounded,Enum,Eq,Generic,Ord,Read,Show)
+
+data Value :: Field -> Type where
+  ValueHttpMethod :: HttpMethod -> Value 'FieldHttpMethod
+  ValueHttpStatus :: HttpStatus -> Value 'FieldHttpStatus
+  ValueHttpProtocol :: HttpProtocol -> Value 'FieldHttpProtocol
+  ValueHttpProtocolVersion :: HttpProtocolVersion -> Value 'FieldHttpProtocolVersion
+  ValueUrl :: Text -> Value 'FieldUrl
+  ValueUserId :: Text -> Value 'FieldUserId
+  ValueObjSize :: Int -> Value 'FieldObjSize
+  ValueIp :: IPv4 -> Value 'FieldIp
+  ValueTimestamp :: OffsetDatetime -> Value 'FieldTimestamp
+
+data SingField :: Field -> Type where
+  SingHttpMethod          :: SingField 'FieldHttpMethod
+  SingHttpStatus          :: SingField 'FieldHttpStatus
+  SingHttpProtocol        :: SingField 'FieldHttpProtocol
+  SingHttpProtocolVersion :: SingField 'FieldHttpProtocolVersion
+  SingUrl                 :: SingField 'FieldUrl
+  SingUserId              :: SingField 'FieldUserId
+  SingObjSize             :: SingField 'FieldObjSize
+  SingIp                  :: SingField 'FieldIp
+  SingTimestamp           :: SingField 'FieldTimestamp
+
+
+type TestLog = '[ FieldIp
+                , FieldTimestamp
+                ]
+
+type NcsaLog = '[ FieldIp
+                , FieldUserId
+                , FieldTimestamp
+                , FieldHttpMethod
+                , FieldUrl
+                , FieldHttpProtocol
+                , FieldHttpProtocolVersion
+                , FieldHttpStatus
+                , FieldObjSize
+                ]
+
+type instance Sing = SingField
+instance Reify 'FieldHttpMethod where
+  reify = SingHttpMethod
+instance Reify 'FieldHttpStatus where
+  reify = SingHttpStatus
+instance Reify 'FieldHttpProtocol where
+  reify = SingHttpProtocol
+instance Reify 'FieldHttpProtocolVersion where
+  reify = SingHttpProtocolVersion
+instance Reify 'FieldUrl where
+  reify = SingUrl
+instance Reify 'FieldUserId where
+  reify = SingUserId
+instance Reify 'FieldObjSize where
+  reify = SingObjSize
+instance Reify 'FieldIp where
+  reify = SingIp
+instance Reify 'FieldTimestamp where
+  reify = SingTimestamp
 
 -- | Alias for `Topaz.map`.
 rmap :: (forall x. f x -> g x) -> Rec f as -> Rec g as
 rmap = Topaz.map
 
--- | Different types present in logs.
-data Field
-  = HttpMethod          -- ^ More explicit name for Network.HTTP.Types.Method
-  | HttpStatus          -- ^ More explicit name for Network.HTTP.Types.Status
-  | HttpProtocol        -- ^ The HTTP Protocol used
-  | HttpProtocolVersion -- ^ More explicit name for Network.HTTP.Types.Version
-  | Url                 -- ^ a url, e.g. "https://hackage.haskell.org"
-  | UserId              -- ^ userId as Text
-  | ObjSize             -- ^ usually requested resource size
-  | Ip                  -- ^ Ip present in log
-  | Timestamp           -- ^ Timestamp
-  deriving (Bounded,Enum,Eq,Generic,Ord,Read,Show)
-
---type NcsaLog = '[ Ip
---                , UserId
---                , Timestamp
---                , HttpMethod
---                , Url
---                , HttpProtocol
---                , HttpProtocolVersion
---                , HttpStatus
---                , ObjSize
---                ]
-
-data SingField (v :: Field) where
-  SingHttpMethod          :: SingField 'HttpMethod
-  SingHttpStatus          :: SingField 'HttpStatus
-  SingHttpProtocol        :: SingField 'HttpProtocol
-  SingHttpProtocolVersion :: SingField 'HttpProtocolVersion
-  SingUrl                 :: SingField 'Url
-  SingUserId              :: SingField 'UserId
-  SingObjSize             :: SingField 'ObjSize
-  SingIp                  :: SingField 'Ip
-  SingTimestamp           :: SingField 'Timestamp
-
-type instance Sing = SingField
-
-instance Reify 'HttpMethod where
-  reify = SingHttpMethod
-instance Reify 'HttpStatus where
-  reify = SingHttpStatus
-instance Reify 'HttpProtocol where
-  reify = SingHttpProtocol
-instance Reify 'HttpProtocolVersion where
-  reify = SingHttpProtocolVersion
-instance Reify 'Url where
-  reify = SingUrl
-instance Reify 'UserId where
-  reify = SingUserId
-instance Reify 'ObjSize where
-  reify = SingObjSize
-instance Reify 'Ip where
-  reify = SingIp
-instance Reify 'Timestamp where
-  reify = SingTimestamp
-
-instance Unreify Field where
-  unreify SingHttpMethod x = x
-  unreify SingHttpStatus x = x
-  unreify SingHttpProtocol x = x
-  unreify SingHttpProtocolVersion x = x
-  unreify SingUrl x = x
-  unreify SingUserId x = x
-  unreify SingObjSize x = x
-  unreify SingIp x = x
-  unreify SingTimestamp x = x
-
-data HttpProtocol = HTTP | HTTPS | FTP 
-  deriving (Eq,Show)
-
+-- | Alias for `Topaz.traverse`
+rtraverse
+  :: Applicative h
+  => (forall x. f x -> h (g x))
+  -> Rec f rs
+  -> h (Rec g rs)
+rtraverse = Topaz.traverse

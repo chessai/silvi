@@ -15,8 +15,8 @@ rm -rf dist
 #cabal2nix https://github.com/chessai/savage.git > nix/savage.nix
 # ip
 #cabal2nix --no-check https://github.com/andrewthad/haskell-ip.git > nix/ip.nix
-# quickcheck-classes
-#cabal2nix --no-check https://github.com/andrewthad/quickcheck-classes.git > nix/quickcheck-classes.nix
+# quantification
+#cabal2nix --no-check https://github.com/andrewthad/quantification.git > nix/quantification.nix
 
 #this is a workaround while cabal-repl is broken (https://github.com/haskell/cabal/issues/4602)
 nix-shell -A silvi.env release.nix --run "cabal update; runhaskell Setup.hs configure; runhaskell Setup.hs repl lib:silvi"

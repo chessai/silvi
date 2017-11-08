@@ -3,12 +3,14 @@ let
   dontCheckPackages = [
     "http-types"
     "ip"
+    "quantification"
   ];
 
   # Jailbreak these packages
   doJailbreakPackages = [
   #    "chronos"
     "http-types"
+    "quantification"
   #  "savage"
     "torsor"
     "ip"
