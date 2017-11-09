@@ -38,11 +38,22 @@ library
                          , savage
                          , text
     exposed-modules:       Silvi
+                         , Silvi.LogFormat
                          , Silvi.Random
                          , Silvi.Record
                          , Silvi.Types
     default-language:      Haskell2010
     other-extensions:     
+
+---------------------------------------------------------------------
+
+executable silvi
+    main-is:               Main.hs
+    build-depends:         base       >= 4.9 && < 5.0
+                         , silvi
+                         , optparse-applicative
+    hs-source-dirs:        app
+    default-language:      Haskell2010
 
 ---------------------------------------------------------------------
 

@@ -7,6 +7,7 @@ let
 
   # Jailbreak these packages
   doJailbreakPackages = [
+    "http-types"
   ];
 
   # Disable haddocks for these packages
