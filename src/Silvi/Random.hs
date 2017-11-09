@@ -24,8 +24,7 @@ import           Network.HTTP.Types.Version
 import           Savage
 import           Savage.Randy               (element, enum, int, print, word8)
 import           Savage.Range               (constantBounded)
-import           Silvi.Record               (Field (..), NcsaLog,
-                                             SingField (..), TestLog,
+import           Silvi.Record               (Field (..), SingField (..),
                                              Value (..), rmap, rtraverse)
 import           Silvi.Types
 import           Topaz.Rec                  (Rec (..), fromSingList)

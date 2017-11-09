@@ -5,3 +5,6 @@ result-doc
 *.swm
 *.swo
 todo.txt
+sample/*
+sample*
+*.txt

@@ -7,9 +7,6 @@ let
 
   # Jailbreak these packages
   doJailbreakPackages = [
-  #    "chronos"
-    "quantification"
-  #  "savage"
   ];
 
   # Disable haddocks for these packages

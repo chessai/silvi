@@ -11,8 +11,6 @@
 module Silvi.Record
   ( rmap
   , rtraverse
-  , NcsaLog
-  , TestLog
   , Field(..)
   , Value(..)
   , SingField(..)
@@ -73,23 +71,6 @@ data SingField :: Field -> Type where
   SingObjSize             :: SingField 'FieldObjSize
   SingIp                  :: SingField 'FieldIp
   SingTimestamp           :: SingField 'FieldTimestamp
-
-
-type TestLog = '[ FieldIp
-                , FieldTimestamp
-                ]
--- | A single log entry from NCSA Common or Extended-formatted log. See:
---   http://publib.boulder.ibm.com/tividd/td/ITWSA/ITWSA_info45/en_US/HTML/guide/c-logs.html#combined
-type NcsaLog = '[ FieldIp
-                , FieldUserId
-                , FieldTimestamp
-                , FieldHttpMethod
-                , FieldUrl
-                , FieldHttpProtocol
-                , FieldHttpProtocolVersion
-                , FieldHttpStatus
-                , FieldObjSize
-                ]
 
 type instance Sing = SingField
 instance Reify 'FieldHttpMethod where
