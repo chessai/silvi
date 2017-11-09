@@ -13,13 +13,11 @@
 
 
 module Silvi
- ( module Silvi.Parsers
- , module Silvi.Random
- , module Silvi.Record 
+ ( module Silvi.Random
+ , module Silvi.Record
  , module Silvi.Types
  ) where
 
-import Silvi.Parsers
-import Silvi.Random
-import Silvi.Record
-import Silvi.Types
+import           Silvi.Random
+import           Silvi.Record
+import           Silvi.Types

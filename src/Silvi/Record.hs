@@ -1,18 +1,14 @@
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE DeriveFunctor #-}
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE GADTs #-}
-{-# LANGUAGE KindSignatures #-}
-{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE DataKinds         #-}
+{-# LANGUAGE DeriveGeneric     #-}
+{-# LANGUAGE GADTs             #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RankNTypes #-}
-{-# LANGUAGE PolyKinds #-}
-{-# LANGUAGE TemplateHaskell #-}
-{-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE TypeInType #-}
-{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE PolyKinds         #-}
+{-# LANGUAGE RankNTypes        #-}
+{-# LANGUAGE TypeFamilies      #-}
+{-# LANGUAGE TypeInType        #-}
+{-# LANGUAGE TypeOperators     #-}
 
-module Silvi.Record 
+module Silvi.Record
   ( rmap
   , rtraverse
   , NcsaLog
@@ -22,20 +18,15 @@ module Silvi.Record
   , SingField(..)
   ) where
 
-import           Chronos.Types ( OffsetDatetime(..) ) 
-import           Data.Exists
-  ( Exists(..)
-  , Reify(..)
-  , Sing
-  , ShowForall(..)
-  )
-import           Data.Kind (Type)
-import           Data.Text (Text)
-import           GHC.Generics (Generic)
-import           Net.Types (IPv4)
+import           Chronos.Types (OffsetDatetime (..))
+import           Data.Exists   (Exists (..), Reify (..), ShowForall (..), Sing)
+import           Data.Kind     (Type)
+import           Data.Text     (Text)
+import           GHC.Generics  (Generic)
+import           Net.Types     (IPv4)
 import           Silvi.Types
-import           Topaz.Rec (Rec(..), traverse)
-import qualified Topaz.Rec as Topaz
+import           Topaz.Rec     (Rec (..), traverse)
+import qualified Topaz.Rec     as Topaz
 
 -- | Different types present in logs.
 data Field
@@ -87,7 +78,8 @@ data SingField :: Field -> Type where
 type TestLog = '[ FieldIp
                 , FieldTimestamp
                 ]
-
+-- | A single log entry from NCSA Common or Extended-formatted log. See:
+--   http://publib.boulder.ibm.com/tividd/td/ITWSA/ITWSA_info45/en_US/HTML/guide/c-logs.html#combined
 type NcsaLog = '[ FieldIp
                 , FieldUserId
                 , FieldTimestamp

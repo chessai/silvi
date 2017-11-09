@@ -1,7 +1,6 @@
 let
   # Disable tests for these packages
   dontCheckPackages = [
-    "http-types"
     "ip"
     "quantification"
   ];
@@ -9,11 +8,8 @@ let
   # Jailbreak these packages
   doJailbreakPackages = [
   #    "chronos"
-    "http-types"
     "quantification"
   #  "savage"
-    "torsor"
-    "ip"
   ];
 
   # Disable haddocks for these packages

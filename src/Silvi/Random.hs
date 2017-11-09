@@ -1,33 +1,34 @@
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE GADTs #-}
-{-# LANGUAGE KindSignatures #-}
-{-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE PolyKinds #-}
-{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE DataKinds           #-}
+{-# LANGUAGE GADTs               #-}
+{-# LANGUAGE LambdaCase          #-}
+{-# LANGUAGE OverloadedStrings   #-}
+{-# LANGUAGE PolyKinds           #-}
+{-# LANGUAGE RankNTypes          #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TypeApplications #-}
 
-module Silvi.Random 
+module Silvi.Random
   ( rand
   , randLogExplicit
   , randLog
   ) where
 
-import Chronos.Types
-import Data.Exists (SingList(..),Exists(..), Reify(..))
-import Data.Text (Text)
-import Data.Word (Word8)
-import Net.IPv4 (ipv4)
-import Network.HTTP.Types.Method
-import Network.HTTP.Types.Status
-import Network.HTTP.Types.Version
-import Savage
-import Savage.Randy (element, enum, int, print, word8)
-import Savage.Range (constantBounded)
-import Silvi.Types
-import Silvi.Record (rmap, rtraverse, NcsaLog, TestLog, Field(..), Value(..), SingField(..))
-import Topaz.Rec (fromSingList, Rec(..))
+import           Chronos.Types
+import           Data.Exists                (Exists (..), Reify (..),
+                                             SingList (..))
+import           Data.Text                  (Text)
+import           Data.Word                  (Word8)
+import           Net.IPv4                   (ipv4)
+import           Network.HTTP.Types.Method
+import           Network.HTTP.Types.Status
+import           Network.HTTP.Types.Version
+import           Savage
+import           Savage.Randy               (element, enum, int, print, word8)
+import           Savage.Range               (constantBounded)
+import           Silvi.Record               (Field (..), NcsaLog,
+                                             SingField (..), TestLog,
+                                             Value (..), rmap, rtraverse)
+import           Silvi.Types
+import           Topaz.Rec                  (Rec (..), fromSingList)
 
 rand :: SingField a -> Gen (Value a)
 rand = \case
@@ -56,7 +57,7 @@ randomIPv4 = ipv4
 
 randomHttpMethod :: Gen HttpMethod
 randomHttpMethod = element httpMethods
-  
+
 randomHttpStatus :: Gen HttpStatus
 randomHttpStatus = element httpStatuses
 
@@ -94,7 +95,7 @@ randomDate = Date
   <$> (Year       <$> enum 1995 2100)
   <*> (Month      <$> enum    0   11)
   <*> (DayOfMonth <$> enum    1   31)
-      
+
 
 randomOffsetDatetime :: Gen OffsetDatetime
 randomOffsetDatetime = OffsetDatetime

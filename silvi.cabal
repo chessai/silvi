@@ -30,22 +30,14 @@ source-repository head
 library
     hs-source-dirs:        src
     build-depends:         base       >= 4.9 && < 5.0
-                         , aeson
-                         , attoparsec
                          , bytestring
                          , chronos
-                         , fast-logger
                          , http-types
                          , ip
-                         , monad-logger
-                         , mtl
                          , quantification
                          , savage
                          , text
-                         , transformers
-                     --  , uaparser
     exposed-modules:       Silvi
-                         , Silvi.Parsers
                          , Silvi.Random
                          , Silvi.Record
                          , Silvi.Types
