@@ -19,9 +19,10 @@ import           Data.Text                  (Text)
 import           Data.Word                  (Word8)
 import           Net.IPv4                   (ipv4)
 import           Net.Types                  (IPv4(..))
-import           Network.HTTP.Types.Method
-import           Network.HTTP.Types.Status
-import           Network.HTTP.Types.Version
+import qualified Network.HTTP.Types.Method  as HttpM
+import qualified Network.HTTP.Types.Status  as HttpS
+import           Network.HTTP.Types.Version (http09,http10,http11,http20)
+import qualified Network.HTTP.Types.Version as HttpV
 import           Savage
 import           Savage.Randy               (element, enum, enumBounded, int, print, word8)
 import           Savage.Range               (constantBounded)
@@ -32,14 +33,14 @@ import           Topaz.Rec                  (Rec (..), fromSingList)
 
 rand :: SingField a -> Gen (Value a)
 rand = \case
-  SingHttpMethod  -> fmap ValueHttpMethod randomHttpMethod
-  SingHttpStatus  -> fmap ValueHttpStatus randomHttpStatus
-  SingHttpVersion -> fmap ValueHttpVersion randomHttpVersion
-  SingUrl         -> fmap ValueUrl randomUrl
-  SingUserId      -> fmap ValueUserId randomUserident
-  SingObjSize     -> fmap ValueObjSize randomObjSize
-  SingIp          -> fmap ValueIp randomIPv4
-  SingTimestamp   -> fmap ValueTimestamp randomOffsetDatetime
+  SingHttpMethod  -> ValueHttpMethod  <$> randomHttpMethod
+  SingHttpStatus  -> ValueHttpStatus  <$> randomHttpStatus
+  SingHttpVersion -> ValueHttpVersion <$> randomHttpVersion
+  SingUrl         -> ValueUrl         <$> randomUrl
+  SingUserId      -> ValueUserId      <$> randomUserident
+  SingObjSize     -> ValueObjSize     <$> randomObjSize
+  SingIp          -> ValueIp          <$> randomIPv4
+  SingTimestamp   -> ValueTimestamp   <$> randomOffsetDatetime
 
 randLog :: forall as. (Reify as) => Gen (Rec Value as)
 randLog = randLogExplicit (fromSingList (reify :: SingList as))
@@ -54,14 +55,14 @@ randomIPv4 = ipv4
   <*> word8 constantBounded
   <*> word8 constantBounded
 
-randomHttpMethod :: Gen StdMethod
+randomHttpMethod :: Gen HttpM.StdMethod
 randomHttpMethod = enumBounded
 
-randomHttpStatus :: Gen HttpStatus
+randomHttpStatus :: Gen HttpS.Status
 randomHttpStatus = enumBounded
 
-randomHttpVersion :: Gen HttpVersion
-randomHttpVersion = enumBounded
+randomHttpVersion :: Gen HttpV.HttpVersion
+randomHttpVersion = element [http09, http10, http11, http20]
 
 randomUserident :: Gen Text
 randomUserident = element userIdents

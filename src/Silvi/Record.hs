@@ -22,9 +22,9 @@ import           Data.Kind     (Type)
 import           Data.Text     (Text)
 import           GHC.Generics  (Generic)
 import           Net.Types     (IPv4)
-import           Network.HTTP.Types.Method
-import           Network.HTTP.Types.Status
-import           Network.HTTP.Types.Version
+import qualified Network.HTTP.Types.Method as HttpM
+import qualified Network.HTTP.Types.Status as HttpS
+import qualified Network.HTTP.Types.Version as HttpV
 import           Silvi.Types
 import           Topaz.Rec     (Rec (..), traverse)
 import qualified Topaz.Rec     as Topaz
@@ -42,14 +42,14 @@ data Field
   deriving (Bounded,Enum,Eq,Generic,Ord,Read,Show)
 
 data Value :: Field -> Type where
-  ValueHttpMethod  :: StdMethod      -> Value 'FieldHttpMethod
-  ValueHttpStatus  :: HttpStatus     -> Value 'FieldHttpStatus
-  ValueHttpVersion :: HttpVersion    -> Value 'FieldHttpVersion
-  ValueUrl         :: Text           -> Value 'FieldUrl
-  ValueUserId      :: Text           -> Value 'FieldUserId
-  ValueObjSize     :: Int            -> Value 'FieldObjSize
-  ValueIp          :: IPv4           -> Value 'FieldIp
-  ValueTimestamp   :: OffsetDatetime -> Value 'FieldTimestamp
+  ValueHttpMethod  :: HttpM.StdMethod   -> Value 'FieldHttpMethod
+  ValueHttpStatus  :: HttpS.Status      -> Value 'FieldHttpStatus
+  ValueHttpVersion :: HttpV.HttpVersion -> Value 'FieldHttpVersion
+  ValueUrl         :: Text              -> Value 'FieldUrl
+  ValueUserId      :: Text              -> Value 'FieldUserId
+  ValueObjSize     :: Int               -> Value 'FieldObjSize
+  ValueIp          :: IPv4              -> Value 'FieldIp
+  ValueTimestamp   :: OffsetDatetime    -> Value 'FieldTimestamp
 
 instance ShowForall Value where
   showsPrecForall p (ValueHttpMethod x)  = showParen (p > 10) $ showString "ValueHttpMethod" . showsPrec 11 x

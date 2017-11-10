@@ -6,8 +6,8 @@ mkDerivation {
   version = "0.10";
   src = fetchgit {
     url = "https://github.com/chessai/http-types.git";
-    sha256 = "1dd69s8zsbfdfgr0bzmxp2n1faxcm1q5rh23rhvkq0swny858yc7";
-    rev = "a180dee4c40d6d1fed38e21602d8e1cb03244e01";
+    sha256 = "0wrxvspq6adjswiika8qzgmwvp4gpcq93pzhz9j1pnrvnd597z00";
+    rev = "57527d6f4fecc6a9d1852142d34f15a7f1a1213f";
   };
   libraryHaskellDepends = [
     array base bytestring case-insensitive text

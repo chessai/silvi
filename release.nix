@@ -1,21 +1,17 @@
 let
   # Disable tests for these packages
   dontCheckPackages = [
-    "ip"
-    "quantification"
   ];
 
   # Jailbreak these packages
   doJailbreakPackages = [
     "http-types"
+    "quantification"
+    "savage"
   ];
 
   # Disable haddocks for these packages
   dontHaddockPackages = [
-    "chronos"
-    "http-types"
-    "savage"
-    "torsor"
   ];
 
   config = {
