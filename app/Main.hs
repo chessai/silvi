@@ -5,13 +5,13 @@
 
 module Main where
 
-import Data.Semigroup ( (<>) )
-import Options.Applicative
-import Prelude hiding (filter)
-import Silvi.LogFormat
-import Silvi.Random
-import Silvi.Record
-import Parsers
+import           Data.Semigroup      ((<>))
+import           Options.Applicative
+import           Parsers
+import           Prelude             hiding (filter)
+import           Silvi.LogFormat
+import           Silvi.Random
+import           Silvi.Record
 
 main :: IO ()
 main = run =<< execParser

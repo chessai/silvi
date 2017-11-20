@@ -1,6 +1,6 @@
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE GADTs #-}
-{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE DeriveGeneric      #-}
+{-# LANGUAGE GADTs              #-}
+{-# LANGUAGE LambdaCase         #-}
 {-# LANGUAGE StandaloneDeriving #-}
 
 {-# OPTIONS_GHC -Wall #-}
@@ -8,11 +8,11 @@
 
 module Parsers where
 
-import Data.Semigroup ( (<>) )
-import Options.Applicative
-import Prelude hiding (filter)
+import           Data.Semigroup      ((<>))
+import           Options.Applicative
+import           Prelude             hiding (filter)
 
-data Command = 
+data Command =
   Command { number  :: Int
           , include :: String
           , filter  :: String
@@ -54,8 +54,8 @@ parseTime = strOption
        ++ "This will generate logs that increase in time with a random step.\n"
        ++ "Example: --time 1y 2mo 3d 4h 5min 6s will generate a number of logs \n"
        ++ "from 1 year, 2 months, 3 days, 4 hours, 5 minutes, and 6 seconds \n"
-       ++ "in the past, to now. \n" 
-       ++ "Note that these numbers are bounded in the following way: \n" 
+       ++ "in the past, to now. \n"
+       ++ "Note that these numbers are bounded in the following way: \n"
        ++ "[0,currentYear - 1971]y [0,11]mo [0,31]d, [0,23]h, [0,59]m, [0,59]s \n"
        ++ "Any omitted time is defaulted to 0.")
   <> showDefault

@@ -16,18 +16,19 @@ module Silvi.Record
   , SingField(..)
   ) where
 
-import           Chronos.Types (OffsetDatetime (..))
-import           Data.Exists   (Exists (..), Reify (..), ShowForall (..), Sing)
-import           Data.Kind     (Type)
-import           Data.Text     (Text)
-import           GHC.Generics  (Generic)
-import           Net.Types     (IPv4)
-import qualified Network.HTTP.Types.Method as HttpM
-import qualified Network.HTTP.Types.Status as HttpS
+import           Chronos.Types              (OffsetDatetime (..))
+import           Data.Exists                (Exists (..), Reify (..),
+                                             ShowForall (..), Sing)
+import           Data.Kind                  (Type)
+import           Data.Text                  (Text)
+import           GHC.Generics               (Generic)
+import           Net.Types                  (IPv4)
+import qualified Network.HTTP.Types.Method  as HttpM
+import qualified Network.HTTP.Types.Status  as HttpS
 import qualified Network.HTTP.Types.Version as HttpV
 import           Silvi.Types
-import           Topaz.Rec     (Rec (..), traverse)
-import qualified Topaz.Rec     as Topaz
+import           Topaz.Rec                  (Rec (..), traverse)
+import qualified Topaz.Rec                  as Topaz
 
 -- | Different types present in logs.
 data Field

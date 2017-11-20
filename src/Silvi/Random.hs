@@ -18,13 +18,14 @@ import           Data.Exists                (Exists (..), Reify (..),
 import           Data.Text                  (Text)
 import           Data.Word                  (Word8)
 import           Net.IPv4                   (ipv4)
-import           Net.Types                  (IPv4(..))
+import           Net.Types                  (IPv4 (..))
 import qualified Network.HTTP.Types.Method  as HttpM
 import qualified Network.HTTP.Types.Status  as HttpS
-import           Network.HTTP.Types.Version (http09,http10,http11,http20)
+import           Network.HTTP.Types.Version (http09, http10, http11, http20)
 import qualified Network.HTTP.Types.Version as HttpV
 import           Savage
-import           Savage.Randy               (element, enum, enumBounded, int, print, word8)
+import           Savage.Randy               (element, enum, enumBounded, int,
+                                             print, word8)
 import           Savage.Range               (constantBounded)
 import           Silvi.Record               (Field (..), SingField (..),
                                              Value (..), rmap, rtraverse)

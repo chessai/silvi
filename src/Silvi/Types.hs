@@ -4,7 +4,7 @@ module Silvi.Types
   , ObjSize(..)
   ) where
 
-import           Data.Text                  (Text)
+import           Data.Text (Text)
 
 -- | Url type.
 --   TODO: Expand on this for better randomisation.

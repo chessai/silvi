@@ -1,12 +1,12 @@
-{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DataKinds         #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Silvi.LogFormat 
+module Silvi.LogFormat
   (
   ) where
 
-import Silvi.Types
-import Silvi.Record ( Field(..), Value(..), SingField(..) )
+import           Silvi.Record (Field (..), SingField (..), Value (..))
+import           Silvi.Types
 
 {-
  - Palo Alto logs formats, as described in:
