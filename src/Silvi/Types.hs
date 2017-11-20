@@ -2,9 +2,11 @@ module Silvi.Types
   ( Url(..)
   , UserId(..)
   , ObjSize(..)
+  , BracketNum(..)
   ) where
 
 import           Data.Text (Text)
+import           Data.Word (Word16, Word8)
 
 -- | Url type.
 --   TODO: Expand on this for better randomisation.
@@ -19,5 +21,13 @@ newtype UserId = UserId { getUserId :: Text }
 
 -- | Requested resource size.
 --
-newtype ObjSize = ObjSize { getObjSize :: Int }
+newtype ObjSize = ObjSize { getObjSize :: Word16 }
   deriving (Show,Eq)
+
+-- | Angle-bracketed number that appears before many logs.
+--
+newtype BracketNum = BracketNum { getBracketNum :: Word8 }
+  deriving (Eq)
+
+instance Show BracketNum where
+  show (BracketNum x) = "<" ++ show x ++ ">"

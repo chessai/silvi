@@ -32,9 +32,10 @@ import qualified Topaz.Rec                  as Topaz
 
 -- | Different types present in logs.
 data Field
-  = FieldHttpMethod          -- ^ More explicit name for Network.HTTP.Types.Method
+  = FieldBracketNum          -- ^ Number that appears before many logs, in the form of "<X>"
+  | FieldHttpMethod          -- ^ More explicit name for Network.HTTP.Types.Method
   | FieldHttpStatus          -- ^ More explicit name for Network.HTTP.Types.Status
-  | FieldHttpVersion -- ^ More explicit name for Network.HTTP.Types.Version
+  | FieldHttpVersion         -- ^ More explicit name for Network.HTTP.Types.Version
   | FieldUrl                 -- ^ a url, e.g. "https://hackage.haskell.org"
   | FieldUserId              -- ^ userId as Text
   | FieldObjSize             -- ^ usually requested resource size
@@ -43,16 +44,18 @@ data Field
   deriving (Bounded,Enum,Eq,Generic,Ord,Read,Show)
 
 data Value :: Field -> Type where
+  ValueBracketNum  :: BracketNum        -> Value 'FieldBracketNum
   ValueHttpMethod  :: HttpM.StdMethod   -> Value 'FieldHttpMethod
   ValueHttpStatus  :: HttpS.Status      -> Value 'FieldHttpStatus
   ValueHttpVersion :: HttpV.HttpVersion -> Value 'FieldHttpVersion
-  ValueUrl         :: Text              -> Value 'FieldUrl
-  ValueUserId      :: Text              -> Value 'FieldUserId
-  ValueObjSize     :: Int               -> Value 'FieldObjSize
+  ValueUrl         :: Url               -> Value 'FieldUrl
+  ValueUserId      :: UserId            -> Value 'FieldUserId
+  ValueObjSize     :: ObjSize           -> Value 'FieldObjSize
   ValueIp          :: IPv4              -> Value 'FieldIp
   ValueTimestamp   :: OffsetDatetime    -> Value 'FieldTimestamp
 
 instance ShowForall Value where
+  showsPrecForall p (ValueBracketNum x)   = showParen (p > 10) $ showString "ValueBracketNum" . showsPrec 11 x
   showsPrecForall p (ValueHttpMethod x)  = showParen (p > 10) $ showString "ValueHttpMethod" . showsPrec 11 x
   showsPrecForall p (ValueHttpStatus x)  = showParen (p > 10) $ showString "ValueHttpStatus" . showsPrec 11 x
   showsPrecForall p (ValueHttpVersion x) = showParen (p > 10) $ showString "ValueHttpVersion" . showsPrec 11 x
@@ -63,6 +66,7 @@ instance ShowForall Value where
   showsPrecForall p (ValueTimestamp x)   = showParen (p > 10) $ showString "ValueTimestamp" . showsPrec 11 x
 
 data SingField :: Field -> Type where
+  SingBracketNum          :: SingField 'FieldBracketNum
   SingHttpMethod          :: SingField 'FieldHttpMethod
   SingHttpStatus          :: SingField 'FieldHttpStatus
   SingHttpVersion         :: SingField 'FieldHttpVersion
@@ -74,6 +78,8 @@ data SingField :: Field -> Type where
 
 type instance Sing = SingField
 
+instance Reify 'FieldBracketNum where
+  reify = SingBracketNum
 instance Reify 'FieldHttpMethod where
   reify = SingHttpMethod
 instance Reify 'FieldHttpStatus where

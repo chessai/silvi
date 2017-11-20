@@ -12,6 +12,7 @@ module Silvi.Random
   , randLog
   ) where
 
+import           Chronos                    (now, timeToDatetime)
 import           Chronos.Types
 import           Data.Exists                (Exists (..), Reify (..),
                                              SingList (..))
@@ -25,15 +26,17 @@ import           Network.HTTP.Types.Version (http09, http10, http11, http20)
 import qualified Network.HTTP.Types.Version as HttpV
 import           Savage
 import           Savage.Randy               (element, enum, enumBounded, int,
-                                             print, word8)
+                                             int8, print, word16, word8)
 import           Savage.Range               (constantBounded)
 import           Silvi.Record               (Field (..), SingField (..),
                                              Value (..), rmap, rtraverse)
 import           Silvi.Types
+import           System.IO.Unsafe           (unsafePerformIO)
 import           Topaz.Rec                  (Rec (..), fromSingList)
 
 rand :: SingField a -> Gen (Value a)
 rand = \case
+  SingBracketNum  -> ValueBracketNum  <$> randomBracketNum
   SingHttpMethod  -> ValueHttpMethod  <$> randomHttpMethod
   SingHttpStatus  -> ValueHttpStatus  <$> randomHttpStatus
   SingHttpVersion -> ValueHttpVersion <$> randomHttpVersion
@@ -56,6 +59,9 @@ randomIPv4 = ipv4
   <*> word8 constantBounded
   <*> word8 constantBounded
 
+randomBracketNum :: Gen BracketNum
+randomBracketNum = BracketNum <$> word8 constantBounded
+
 randomHttpMethod :: Gen HttpM.StdMethod
 randomHttpMethod = enumBounded
 
@@ -65,16 +71,13 @@ randomHttpStatus = enumBounded
 randomHttpVersion :: Gen HttpV.HttpVersion
 randomHttpVersion = element [http09, http10, http11, http20]
 
-randomUserident :: Gen Text
+randomUserident :: Gen UserId
 randomUserident = element userIdents
 
-randomObjSize :: Gen Int
-randomObjSize = int constantBounded
+randomObjSize :: Gen ObjSize
+randomObjSize = ObjSize <$> word16 constantBounded
 
-randomQuote :: Gen Text
-randomQuote = element quotes
-
-randomUrl :: Gen Text
+randomUrl :: Gen Url
 randomUrl = element urls
 
 randomDatetime :: Gen Datetime
@@ -94,6 +97,18 @@ randomDate = Date
   <*> (Month      <$> enum    0   11)
   <*> (DayOfMonth <$> enum    1   31)
 
+randomYear' :: Int -- ^ Origin year
+            -> Int -- ^ End year, Usually current year
+            -> Gen Year
+randomYear' a b = Year <$> enum a b
+
+-- | Random year, generated from a given year to the current one.
+--
+randomYear :: Int -- ^ Origin year
+           -> Gen Year
+randomYear a = randomYear' a b
+  where b = f (timeToDatetime (unsafePerformIO now))
+        f (Datetime (Date (Year y) (Month mx) (DayOfMonth d)) (TimeOfDay h m s)) = y
 
 randomOffsetDatetime :: Gen OffsetDatetime
 randomOffsetDatetime = OffsetDatetime
@@ -104,15 +119,12 @@ randomOffset :: Gen Offset
 randomOffset = element offsets
 
 -- | List of sample Useridents.
-userIdents :: [Text]
-userIdents = ["-","andrewthad","cement","chessai"]
+userIdents :: [UserId]
+userIdents = map UserId ["-","andrewthad","cement","chessai"]
 
 -- | List of sample URLs.
-urls :: [Text]
-urls = ["https://github.com","https://youtube.com","layer3com.com"]
-
-quotes :: [Text]
-quotes = ["customerA got caught putting their hand in the cookie jar","customerB uses firefox instead of chrome"]
+urls :: [Url]
+urls = map Url ["https://github.com","https://youtube.com","layer3com.com"]
 
 -- | List of sample
 -- | List of Time Zone Offsets. See:
