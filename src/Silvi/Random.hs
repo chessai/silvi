@@ -100,15 +100,34 @@ randomDate = Date
 randomYear' :: Int -- ^ Origin year
             -> Int -- ^ End year, Usually current year
             -> Gen Year
-randomYear' a b = Year <$> enum a b
+randomYear' a b = Year <$> enum (min a b) (max a b)
 
 -- | Random year, generated from a given year to the current one.
 --
 randomYear :: Int -- ^ Origin year
            -> Gen Year
 randomYear a = randomYear' a b
-  where b = f (timeToDatetime (unsafePerformIO now))
-        f (Datetime (Date (Year y) (Month mx) (DayOfMonth d)) (TimeOfDay h m s)) = y
+  where b = (getYear . dateYear . datetimeDate) $ (timeToDatetime (unsafePerformIO now))
+
+randomMonth' :: Int -- ^ Origin month
+             -> Int -- ^ End month, usually current
+             -> Gen Month
+randomMonth' a b = Month <$> enum (min a b) (max a b)
+
+randomMonth :: Int -- ^ Origin month
+            -> Gen Month
+randomMonth a = randomMonth' a b
+  where b = (getMonth . dateMonth . datetimeDate) $ (timeToDatetime (unsafePerformIO now))
+
+randomDay' :: Int -- ^ Origin Day
+           -> Int -- ^ End day, usually the current day
+           -> Gen DayOfMonth
+randomDay' a b = DayOfMonth <$> enum (min a b) (max a b)
+
+randomDay :: Int -- ^ Origin Day
+          -> Gen DayOfMonth
+randomDay a = randomDay' a b
+  where b = (getDayOfMonth . dateDay . datetimeDate) $ (timeToDatetime (unsafePerformIO now))
 
 randomOffsetDatetime :: Gen OffsetDatetime
 randomOffsetDatetime = OffsetDatetime

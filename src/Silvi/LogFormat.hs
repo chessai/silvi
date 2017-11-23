@@ -14,7 +14,11 @@ import           Silvi.Types
  -
 -}
 
-type PaloAltoTraffic = '[]
+type TestLog = '[ FieldBracketNum
+                , FieldIp
+                ]
+
+type PaloAltoTraffic = '[ ]
 
 type PaloAltoThreat = '[]
 
