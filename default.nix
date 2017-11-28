@@ -30,6 +30,7 @@ let
         doCheck = pkgs.lib.elem args.pname [ ];
         doHaddock = false;
       });
+      chronos        = cp "chronos.nix";
       quantification = cp "quantification.nix";
       http-types     = cp "http-types.nix";
       savage         = cp "savage.nix";

@@ -6,14 +6,36 @@
 {-# LANGUAGE RankNTypes          #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
+-- | This library generates random logs using logs represented as type-level lists.
+--
+-- The following is a simple example of how this would work.
+--
+-- > -- Example.hs
+-- >
+-- > {-# LANGUAGE DataKinds         #-}
+-- > {-# LANGUAGE OverloadedStrings #-}
+-- > {-# LANGUAGE TypeApplications  #-}
+-- >
+-- > import Silvi.Random
+-- > import Silvi.Record
+-- >
+-- > -- TestLog represents a Log consisting of just an IPv4 address and a URL.
+-- > type TestLog = '[ FieldIp
+-- >                 , FieldUrl
+-- >                 ]
+-- >
+-- > -- 'randTestLog' now contains a TestLog with randomised inhabitants of the IPv4 and URL types.
+-- > randTestLog :: Gen (Rec Value as)
+-- > randTestLog = randLog @TestLog
+--
 module Silvi.Random
-  ( rand
-  , randLogExplicit
+  ( randLogExplicit
   , randLog
   ) where
 
-import           Chronos                    (now, timeToDatetime)
+import qualified Chronos
 import           Chronos.Types
+import           Control.Applicative        (liftA2)
 import           Data.Exists                (Exists (..), Reify (..),
                                              SingList (..))
 import           Data.Text                  (Text)
@@ -31,7 +53,6 @@ import           Savage.Range               (constantBounded)
 import           Silvi.Record               (Field (..), SingField (..),
                                              Value (..), rmap, rtraverse)
 import           Silvi.Types
-import           System.IO.Unsafe           (unsafePerformIO)
 import           Topaz.Rec                  (Rec (..), fromSingList)
 
 rand :: SingField a -> Gen (Value a)
@@ -46,6 +67,8 @@ rand = \case
   SingIp          -> ValueIp          <$> randomIPv4
   SingTimestamp   -> ValueTimestamp   <$> randomOffsetDatetime
 
+-- | To use 'randLog', enable -XTypeApplications.
+--
 randLog :: forall as. (Reify as) => Gen (Rec Value as)
 randLog = randLogExplicit (fromSingList (reify :: SingList as))
 
@@ -92,23 +115,26 @@ randomTimeOfDay = TimeOfDay
   <*> enum 0 59999
 
 randomDate :: Gen Date
-randomDate = Date
-  <$> (randomYear 1995 2021)
-  <*> (randomMonth 0 11)
-  <*> (randomDayOfMonth 1 31)
+randomDate = do
+  let year  = randomYear 1995 2021
+      month = Month <$> int constantBounded
+      day = randomDay 1 =<< liftA2 daysUpperBound year month
+  Date <$> year <*> month <*> day
+  where daysUpperBound :: Year -> Month -> Int
+        daysUpperBound y m = Chronos.monthLength (Chronos.isLeapYear y) m
 
 randomYear :: Int -- ^ Origin year
-           -> Int -- ^ End year, Usually current year
+           -> Int -- ^ End year
            -> Gen Year
 randomYear a b = Year <$> enum (min a b) (max a b)
 
 randomMonth :: Int -- ^ Origin month
-            -> Int -- ^ End month, usually current
+            -> Int -- ^ End month
             -> Gen Month
 randomMonth a b = Month <$> enum (min a b) (max a b)
 
 randomDay :: Int -- ^ Origin Day
-          -> Int -- ^ End day, usually the current day
+          -> Int -- ^ End day
           -> Gen DayOfMonth
 randomDay a b = DayOfMonth <$> enum (min a b) (max a b)
 
@@ -120,6 +146,12 @@ randomOffsetDatetime = OffsetDatetime
 randomOffset :: Gen Offset
 randomOffset = element offsets
 
+-- | List of sample
+-- | List of Time Zone Offsets. See:
+--   https://en.wikipedia.org/wiki/List_of_time_zone_abbreviations
+offsets :: [Offset]
+offsets = map Offset [100,200,300,330,400,430,500,530,545,600,630,700,800,845,900,930,1000,1030,1100,1200,1245,1300,1345,1400,0,-100,-200,-230,-300,-330,-400,-500,-600,-700,-800,-900,-930,-1000,-1100,-1200]
+
 -- | List of sample Useridents.
 userIdents :: [UserId]
 userIdents = map UserId ["-","andrewthad","cement","chessai"]
@@ -128,8 +160,4 @@ userIdents = map UserId ["-","andrewthad","cement","chessai"]
 urls :: [Url]
 urls = map Url ["https://github.com","https://youtube.com","layer3com.com"]
 
--- | List of sample
--- | List of Time Zone Offsets. See:
---   https://en.wikipedia.org/wiki/List_of_time_zone_abbreviations
-offsets :: [Offset]
-offsets = map Offset [100,200,300,330,400,430,500,530,545,600,630,700,800,845,900,930,1000,1030,1100,1200,1245,1300,1345,1400,0,-100,-200,-230,-300,-330,-400,-500,-600,-700,-800,-900,-930,-1000,-1100,-1200]
+
