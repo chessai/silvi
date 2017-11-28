@@ -2,7 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Silvi.LogFormat
-  ( TestLog(..)
+  ( TestLog
   ) where
 
 import           Silvi.Record (Field (..), SingField (..), Value (..))
