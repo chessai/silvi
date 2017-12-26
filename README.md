@@ -5,6 +5,8 @@
 
 `silvi` is a Haskell library for generating fake logs from user specifications.
 
+See `src/Silvi/Tutorial.hs` for a quick tutorial on getting started.
+
 [hackage-badge]:
     https://img.shields.io/hackage/v/silvi.svg?label=Hackage
 [hackage-link]:
