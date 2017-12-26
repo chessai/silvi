@@ -1,10 +1,10 @@
 { package ? "silvi", compiler ? "ghc822" }:
 
 let
-  fetchNixpkgs = import ./fetchNixpkgs.nix;
+  fetchNixpkgs = import ./nix/fetchNixpkgs.nix;
   nixpkgs = fetchNixpkgs {
-    rev = "597f819bc3dc1097a8daea632b51a7c065127b1f";
-    sha256 = "1xzrgvhf0884s2ic88p7z14wzdp5sa454f028l5jw3290sd391bi";
+    rev = "e5629dc51a313c3b99725616718d2deff49cd891"; 
+    sha256 = "0s3a65mswqds5395cqy9d4mj8d75vii2479y4dvyagamv1zh0zp6"; 
   };
   pkgs = import nixpkgs { config = {}; };
   inherit (pkgs) haskell;
@@ -23,17 +23,19 @@ let
   overrides = haskell.packages.${compiler}.override {
     overrides = self: super:
     with haskell.lib;
-    with { cp = file: (self.callPackage (./nix + "/${file}") {}); };
-
+    with { cp = file: (self.callPackage (./nix/haskell + "/${file}.nix") {});
+           build = name: path: self.callCabal2nix name (builtins.filterSource filterPredicate path) {};
+         };        
     {
       mkDerivation = args: super.mkDerivation (args // {
         doCheck = pkgs.lib.elem args.pname [ ];
         doHaddock = false;
       });
-      chronos        = cp "chronos.nix";
-      quantification = cp "quantification.nix";
-      http-types     = cp "http-types.nix";
-      savage         = cp "savage.nix";
+      http-types = cp "http-types";
+      chronos = cp "chronos";
+      savage = cp "savage"; 
+      silvi = build "silvi" ./.;
+
     };
   };
 in rec {

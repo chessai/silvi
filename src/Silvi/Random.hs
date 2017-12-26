@@ -31,13 +31,16 @@
 module Silvi.Random
   ( randLogExplicit
   , randLog
+  , print 
+  , printMany 
   ) where
 
 import qualified Chronos
 import           Chronos.Types
 import           Control.Applicative        (liftA2)
-import           Data.Exists                (Exists (..), Reify (..),
-                                             SingList (..))
+import           Control.Monad              (replicateM, replicateM_)
+import           Control.Monad.IO.Class     (MonadIO(..))
+import           Data.Exists                (Exists (..), Reify (..), SingList (..))
 import           Data.Text                  (Text)
 import           Data.Word                  (Word8)
 import           Net.IPv4                   (ipv4)
@@ -47,13 +50,16 @@ import qualified Network.HTTP.Types.Status  as HttpS
 import           Network.HTTP.Types.Version (http09, http10, http11, http20)
 import qualified Network.HTTP.Types.Version as HttpV
 import           Savage
+import           Savage.Internal.Gen        (printOnly)
 import           Savage.Randy               (element, enum, enumBounded, int,
-                                             int8, print, word16, word8)
+                                             int8, word16, word8)
 import           Savage.Range               (constantBounded)
 import           Silvi.Record               (Field (..), SingField (..),
                                              Value (..), rmap, rtraverse)
 import           Silvi.Types
 import           Topaz.Rec                  (Rec (..), fromSingList)
+
+import           Prelude                    hiding (print)
 
 rand :: SingField a -> Gen (Value a)
 rand = \case
@@ -67,13 +73,17 @@ rand = \case
   SingIp          -> ValueIp          <$> randomIPv4
   SingTimestamp   -> ValueTimestamp   <$> randomOffsetDatetime
 
--- | To use 'randLog', enable -XTypeApplications.
---
 randLog :: forall as. (Reify as) => Gen (Rec Value as)
 randLog = randLogExplicit (fromSingList (reify :: SingList as))
 
 randLogExplicit :: Rec SingField rs -> Gen (Rec Value rs)
 randLogExplicit = rtraverse rand
+
+print :: (MonadIO m, Show a) => Gen a -> m ()
+print = printOnly
+
+printMany :: (MonadIO m, Show a) => Int -> Gen a -> m ()
+printMany n gen = replicateM_ n (print gen)
 
 randomIPv4 :: Gen IPv4
 randomIPv4 = ipv4
@@ -121,7 +131,7 @@ randomDate = do
       day = randomDay 1 =<< liftA2 daysUpperBound year month
   Date <$> year <*> month <*> day
   where daysUpperBound :: Year -> Month -> Int
-        daysUpperBound y m = Chronos.monthLength (Chronos.isLeapYear y) m
+        daysUpperBound y m = Chronos.daysInMonth (Chronos.isLeapYear y) m
 
 randomYear :: Int -- ^ Origin year
            -> Int -- ^ End year

@@ -1,2 +1,6 @@
 :set prompt "λ "
 :set -fprint-explicit-foralls
+:set -XDataKinds
+:set -XOverloadedStrings
+:set -XTypeApplications
+
