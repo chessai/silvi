@@ -6,33 +6,12 @@
 {-# LANGUAGE RankNTypes          #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
--- | This library generates random logs using logs represented as type-level lists.
---
--- The following is a simple example of how this would work.
---
--- > -- Example.hs
--- >
--- > {-# LANGUAGE DataKinds         #-}
--- > {-# LANGUAGE OverloadedStrings #-}
--- > {-# LANGUAGE TypeApplications  #-}
--- >
--- > import Silvi.Random
--- > import Silvi.Record
--- >
--- > -- TestLog represents a Log consisting of just an IPv4 address and a URL.
--- > type TestLog = '[ FieldIp
--- >                 , FieldUrl
--- >                 ]
--- >
--- > -- 'randTestLog' now contains a TestLog with randomised inhabitants of the IPv4 and URL types.
--- > randTestLog :: Gen (Rec Value as)
--- > randTestLog = randLog @TestLog
---
 module Silvi.Random
   ( randLogExplicit
   , randLog
   , print 
   , printMany 
+  , Gen(..) 
   ) where
 
 import qualified Chronos
@@ -51,14 +30,12 @@ import           Network.HTTP.Types.Version (http09, http10, http11, http20)
 import qualified Network.HTTP.Types.Version as HttpV
 import           Savage
 import           Savage.Internal.Gen        (printOnly)
-import           Savage.Randy               (element, enum, enumBounded, int,
-                                             int8, word16, word8)
+import           Savage.Randy               (element, enum, enumBounded, int, int8, word16, word8)
 import           Savage.Range               (constantBounded)
-import           Silvi.Record               (Field (..), SingField (..),
-                                             Value (..), rmap, rtraverse)
+import           Silvi.Record               (Field (..), SingField (..), Value (..))
 import           Silvi.Types
 import           Topaz.Rec                  (Rec (..), fromSingList)
-
+import qualified Topaz.Rec                  as Topaz
 import           Prelude                    hiding (print)
 
 rand :: SingField a -> Gen (Value a)
@@ -77,7 +54,7 @@ randLog :: forall as. (Reify as) => Gen (Rec Value as)
 randLog = randLogExplicit (fromSingList (reify :: SingList as))
 
 randLogExplicit :: Rec SingField rs -> Gen (Rec Value rs)
-randLogExplicit = rtraverse rand
+randLogExplicit = Topaz.traverse rand
 
 print :: (MonadIO m, Show a) => Gen a -> m ()
 print = printOnly

@@ -9,11 +9,10 @@
 {-# LANGUAGE TypeOperators     #-}
 
 module Silvi.Record
-  ( rmap
-  , rtraverse
-  , Field(..)
+  ( Field(..)
   , Value(..)
   , SingField(..)
+  , Rec(..) 
   ) where
 
 import           Chronos.Types              (OffsetDatetime (..))
@@ -27,7 +26,7 @@ import qualified Network.HTTP.Types.Method  as HttpM
 import qualified Network.HTTP.Types.Status  as HttpS
 import qualified Network.HTTP.Types.Version as HttpV
 import           Silvi.Types
-import           Topaz.Rec                  (Rec (..), traverse)
+import           Topaz.Rec                  (Rec(..), traverse)
 import qualified Topaz.Rec                  as Topaz
 
 -- | Different types present in logs.
@@ -96,15 +95,3 @@ instance Reify 'FieldIp where
   reify = SingIp
 instance Reify 'FieldTimestamp where
   reify = SingTimestamp
-
--- | Alias for `Topaz.map`.
-rmap :: (forall x. f x -> g x) -> Rec f as -> Rec g as
-rmap = Topaz.map
-
--- | Alias for `Topaz.traverse`
-rtraverse
-  :: Applicative h
-  => (forall x. f x -> h (g x))
-  -> Rec f rs
-  -> h (Rec g rs)
-rtraverse = Topaz.traverse

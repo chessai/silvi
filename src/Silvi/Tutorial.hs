@@ -40,8 +40,8 @@ module Silvi.Tutorial
     --
   ) where
 
-import           Silvi.Random (randLog, randLogExplicit)
-import           Silvi.Record (Field (..), SingField (..), Value (..))
+import           Silvi.Random (randLog, printMany, Gen(..))
+import           Silvi.Record (Field (..), SingField (..), Value (..), Rec(..))
 
 --------------------------------------------------------------------------------
 
@@ -71,22 +71,31 @@ import           Silvi.Record (Field (..), SingField (..), Value (..))
 -- $def_logs
 --
 -- > -- It is easy to define a log. 
--- > -- A log is just represented as a type-level list consisting of different fields.
+-- > -- A log is represented as a type-level list consisting of different fields.
 -- >
 -- > -- 'SimpleLog' represents a Log consisting of just an IPv4 address and a URL.
 -- > type SimpleLog = '[ FieldIp
 -- >                   , FieldUrl
 -- >                   ]
 
+type SimpleLog = '[ FieldIp
+                  , FieldUrl
+                  ]
+
 ---------------------------------------------------------------------------------
 
 -- $rand_logs
 -- >
--- > -- 'randTestLog' now contains a TestLog with randomised inhabitants of the IPv4 and URL types.
+-- > -- 'randSimpleLog' now contains a SimpleLog with randomised inhabitants of the IPv4 and URL types.
 -- > randSimpleLog :: Gen (Rec Value as)
--- > randSimpleLog = randLog @TestLog
+-- > randSimpleLog = randLog @SimpleLog
 -- > 
--- > -- 'main' will print out 1000 'TestLog's.
+-- > -- 'main' will print out 1000 'SimpleLog's.
 -- > main :: IO ()
 -- > main = printMany 1000 randSimpleLog
 
+randSimpleLog :: Gen (Rec Value SimpleLog)
+randSimpleLog = randLog @SimpleLog
+
+main :: IO ()
+main = printMany 1000 randSimpleLog
