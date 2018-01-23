@@ -3,7 +3,7 @@
 [![Hackage][hackage-badge]][hackage-link]
 [![License][license-badge]][license-link]
 
-`silvi` is a Haskell library for generating fake logs from user specifications.
+`silvi` is a Haskell library for generating fake logs from Extensible Records.
 
 See `src/Silvi/Tutorial.hs` for a quick tutorial on getting started.
 

@@ -6,34 +6,35 @@
 {-# LANGUAGE RankNTypes          #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
+{-# OPTIONS_GHC -Wall #-}
+
 module Silvi.Random
   ( randLogExplicit
   , randLog
   , print 
   , printMany 
-  , Gen(..) 
+  , Gen
   ) where
 
 import qualified Chronos
 import           Chronos.Types
 import           Control.Applicative        (liftA2)
-import           Control.Monad              (replicateM, replicateM_)
+import           Control.Monad              (replicateM_)
 import           Control.Monad.IO.Class     (MonadIO(..))
-import           Data.Exists                (Exists (..), Reify (..), SingList (..))
-import           Data.Text                  (Text)
-import           Data.Word                  (Word8)
+import           Data.Exists                (Reify (..), SingList (..))
 import           Net.IPv4                   (ipv4)
-import           Net.Types                  (IPv4 (..))
+import           Net.IPv6                   (ipv6)
+import           Net.Types                  (IPv4(..),IPv6(..))
 import qualified Network.HTTP.Types.Method  as HttpM
 import qualified Network.HTTP.Types.Status  as HttpS
 import           Network.HTTP.Types.Version (http09, http10, http11, http20)
 import qualified Network.HTTP.Types.Version as HttpV
 import           Savage
 import           Savage.Internal.Gen        (printOnly)
-import           Savage.Randy               (element, enum, enumBounded, int, int8, word16, word8)
+import           Savage.Randy               (element, enum, enumBounded, int, word8, word16)
 import           Savage.Range               (constantBounded)
-import           Silvi.Record               (Field (..), SingField (..), Value (..))
-import           Silvi.Types
+import           Silvi.Record               (SingField (..), Value (..))
+import           Silvi.Types                
 import           Topaz.Rec                  (Rec (..), fromSingList)
 import qualified Topaz.Rec                  as Topaz
 import           Prelude                    hiding (print)
@@ -47,7 +48,8 @@ rand = \case
   SingUrl         -> ValueUrl         <$> randomUrl
   SingUserId      -> ValueUserId      <$> randomUserident
   SingObjSize     -> ValueObjSize     <$> randomObjSize
-  SingIp          -> ValueIp          <$> randomIPv4
+  SingIPv4        -> ValueIPv4        <$> randomIPv4
+  SingIPv6        -> ValueIPv6        <$> randomIPv6 
   SingTimestamp   -> ValueTimestamp   <$> randomOffsetDatetime
 
 randLog :: forall as. (Reify as) => Gen (Rec Value as)
@@ -68,6 +70,17 @@ randomIPv4 = ipv4
   <*> word8 constantBounded
   <*> word8 constantBounded
   <*> word8 constantBounded
+
+randomIPv6 :: Gen IPv6
+randomIPv6 = ipv6
+  <$> word16 constantBounded
+  <*> word16 constantBounded
+  <*> word16 constantBounded
+  <*> word16 constantBounded
+  <*> word16 constantBounded
+  <*> word16 constantBounded
+  <*> word16 constantBounded
+  <*> word16 constantBounded
 
 randomBracketNum :: Gen BracketNum
 randomBracketNum = BracketNum <$> word8 constantBounded
@@ -115,10 +128,10 @@ randomYear :: Int -- ^ Origin year
            -> Gen Year
 randomYear a b = Year <$> enum (min a b) (max a b)
 
-randomMonth :: Int -- ^ Origin month
-            -> Int -- ^ End month
-            -> Gen Month
-randomMonth a b = Month <$> enum (min a b) (max a b)
+--randomMonth :: Int -- ^ Origin month
+--            -> Int -- ^ End month
+--            -> Gen Month
+--randomMonth a b = Month <$> enum (min a b) (max a b)
 
 randomDay :: Int -- ^ Origin Day
           -> Int -- ^ End day

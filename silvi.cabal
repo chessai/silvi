@@ -39,6 +39,7 @@ library
                          , savage         >= 1.0.3  && < 2.0
                          , text
     exposed-modules:       Silvi
+                         , Silvi.Encode 
                          , Silvi.Random
                          , Silvi.Record
                          , Silvi.Types

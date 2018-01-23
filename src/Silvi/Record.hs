@@ -8,6 +8,8 @@
 {-# LANGUAGE TypeInType        #-}
 {-# LANGUAGE TypeOperators     #-}
 
+{-# OPTIONS_GHC -Wall #-}
+
 module Silvi.Record
   ( Field(..)
   , Value(..)
@@ -16,18 +18,16 @@ module Silvi.Record
   ) where
 
 import           Chronos.Types              (OffsetDatetime (..))
-import           Data.Exists                (Exists (..), Reify (..),
+import           Data.Exists                (Reify (..),
                                              ShowForall (..), Sing)
 import           Data.Kind                  (Type)
-import           Data.Text                  (Text)
 import           GHC.Generics               (Generic)
-import           Net.Types                  (IPv4)
+import           Net.Types                  (IPv4,IPv6)
 import qualified Network.HTTP.Types.Method  as HttpM
 import qualified Network.HTTP.Types.Status  as HttpS
 import qualified Network.HTTP.Types.Version as HttpV
 import           Silvi.Types
-import           Topaz.Rec                  (Rec(..), traverse)
-import qualified Topaz.Rec                  as Topaz
+import           Topaz.Rec                  (Rec(..))
 
 -- | Different types present in logs.
 data Field
@@ -38,8 +38,9 @@ data Field
   | FieldUrl                 -- ^ a url, e.g. "https://hackage.haskell.org"
   | FieldUserId              -- ^ userId as Text
   | FieldObjSize             -- ^ usually requested resource size
-  | FieldIp                  -- ^ FieldIp present in log
-  | FieldTimestamp           -- ^ Timestamp
+  | FieldIPv4                -- ^ IPv4 present in log
+  | FieldIPv6                -- ^ IPv6 address 
+  | FieldTimestamp           -- ^ Timestamp 
   deriving (Bounded,Enum,Eq,Generic,Ord,Read,Show)
 
 data Value :: Field -> Type where
@@ -50,30 +51,33 @@ data Value :: Field -> Type where
   ValueUrl         :: Url               -> Value 'FieldUrl
   ValueUserId      :: UserId            -> Value 'FieldUserId
   ValueObjSize     :: ObjSize           -> Value 'FieldObjSize
-  ValueIp          :: IPv4              -> Value 'FieldIp
+  ValueIPv4        :: IPv4              -> Value 'FieldIPv4
+  ValueIPv6        :: IPv6              -> Value 'FieldIPv6 
   ValueTimestamp   :: OffsetDatetime    -> Value 'FieldTimestamp
 
 instance ShowForall Value where
-  showsPrecForall p (ValueBracketNum x)   = showParen (p > 10) $ showString "ValueBracketNum" . showsPrec 11 x
-  showsPrecForall p (ValueHttpMethod x)  = showParen (p > 10) $ showString "ValueHttpMethod" . showsPrec 11 x
-  showsPrecForall p (ValueHttpStatus x)  = showParen (p > 10) $ showString "ValueHttpStatus" . showsPrec 11 x
+  showsPrecForall p (ValueBracketNum x)  = showParen (p > 10) $ showString "ValueBracketNum"  . showsPrec 11 x
+  showsPrecForall p (ValueHttpMethod x)  = showParen (p > 10) $ showString "ValueHttpMethod"  . showsPrec 11 x
+  showsPrecForall p (ValueHttpStatus x)  = showParen (p > 10) $ showString "ValueHttpStatus"  . showsPrec 11 x
   showsPrecForall p (ValueHttpVersion x) = showParen (p > 10) $ showString "ValueHttpVersion" . showsPrec 11 x
-  showsPrecForall p (ValueUrl x)         = showParen (p > 10) $ showString "ValueUrl" . showsPrec 11 x
-  showsPrecForall p (ValueUserId x)      = showParen (p > 10) $ showString "ValueUserId" . showsPrec 11 x
-  showsPrecForall p (ValueObjSize x)     = showParen (p > 10) $ showString "ValueObjSize" . showsPrec 11 x
-  showsPrecForall p (ValueIp x)          = showParen (p > 10) $ showString "ValueIp" . showsPrec 11 x
-  showsPrecForall p (ValueTimestamp x)   = showParen (p > 10) $ showString "ValueTimestamp" . showsPrec 11 x
+  showsPrecForall p (ValueUrl x)         = showParen (p > 10) $ showString "ValueUrl"         . showsPrec 11 x
+  showsPrecForall p (ValueUserId x)      = showParen (p > 10) $ showString "ValueUserId"      . showsPrec 11 x
+  showsPrecForall p (ValueObjSize x)     = showParen (p > 10) $ showString "ValueObjSize"     . showsPrec 11 x
+  showsPrecForall p (ValueIPv4 x)        = showParen (p > 10) $ showString "ValueIPv4"        . showsPrec 11 x
+  showsPrecForall p (ValueIPv6 x)        = showParen (p > 10) $ showString "ValueIPv6"        . showsPrec 11 x 
+  showsPrecForall p (ValueTimestamp x)   = showParen (p > 10) $ showString "ValueTimestamp"   . showsPrec 11 x
 
 data SingField :: Field -> Type where
-  SingBracketNum          :: SingField 'FieldBracketNum
-  SingHttpMethod          :: SingField 'FieldHttpMethod
-  SingHttpStatus          :: SingField 'FieldHttpStatus
-  SingHttpVersion         :: SingField 'FieldHttpVersion
-  SingUrl                 :: SingField 'FieldUrl
-  SingUserId              :: SingField 'FieldUserId
-  SingObjSize             :: SingField 'FieldObjSize
-  SingIp                  :: SingField 'FieldIp
-  SingTimestamp           :: SingField 'FieldTimestamp
+  SingBracketNum  :: SingField 'FieldBracketNum
+  SingHttpMethod  :: SingField 'FieldHttpMethod
+  SingHttpStatus  :: SingField 'FieldHttpStatus
+  SingHttpVersion :: SingField 'FieldHttpVersion
+  SingUrl         :: SingField 'FieldUrl
+  SingUserId      :: SingField 'FieldUserId
+  SingObjSize     :: SingField 'FieldObjSize
+  SingIPv4        :: SingField 'FieldIPv4
+  SingIPv6        :: SingField 'FieldIPv6 
+  SingTimestamp   :: SingField 'FieldTimestamp
 
 type instance Sing = SingField
 
@@ -91,7 +95,9 @@ instance Reify 'FieldUserId where
   reify = SingUserId
 instance Reify 'FieldObjSize where
   reify = SingObjSize
-instance Reify 'FieldIp where
-  reify = SingIp
+instance Reify 'FieldIPv4 where
+  reify = SingIPv4
+instance Reify 'FieldIPv6 where
+  reify = SingIPv6
 instance Reify 'FieldTimestamp where
   reify = SingTimestamp

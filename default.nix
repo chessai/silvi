@@ -32,10 +32,11 @@ let
         doHaddock = false;
       });
       http-types = cp "http-types";
-      chronos = cp "chronos";
-      savage = cp "savage"; 
-      silvi = build "silvi" ./.;
-
+      chronos    = cp "chronos";
+      savage     = cp "savage"; 
+      ip         = cp "ip"; 
+      silvi      = build "silvi" ./.;
+      
     };
   };
 in rec {
