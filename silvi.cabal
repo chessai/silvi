@@ -38,6 +38,7 @@ library
                          , quantification >= 0.3    && < 0.5
                          , savage         >= 1.0.3  && < 2.0
                          , text
+                         , transformers
     exposed-modules:       Silvi
                          , Silvi.Encode 
                          , Silvi.Random

@@ -1,6 +1,7 @@
 {-# LANGUAGE DataKinds         #-}
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE GADTs             #-}
+{-# LANGUAGE LambdaCase        #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE PolyKinds         #-}
 {-# LANGUAGE RankNTypes        #-}
@@ -26,6 +27,7 @@ import           Net.Types                  (IPv4,IPv6)
 import qualified Network.HTTP.Types.Method  as HttpM
 import qualified Network.HTTP.Types.Status  as HttpS
 import qualified Network.HTTP.Types.Version as HttpV
+import           Silvi.Encode
 import           Silvi.Types
 import           Topaz.Rec                  (Rec(..))
 
@@ -101,3 +103,15 @@ instance Reify 'FieldIPv6 where
   reify = SingIPv6
 instance Reify 'FieldTimestamp where
   reify = SingTimestamp
+
+instance Encode (Value a) where
+  encode = \case
+    ValueBracketNum x -> encode x
+    ValueHttpMethod x -> encode x
+    ValueHttpStatus x -> encode x
+    ValueUrl        x -> encode x
+    ValueUserId     x -> encode x
+    ValueObjSize    x -> encode x
+    ValueIPv4       x -> encode x
+    ValueIPv6       x -> encode x
+    ValueTimestamp  x -> encode x 
