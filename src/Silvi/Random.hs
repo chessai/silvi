@@ -13,7 +13,7 @@ module Silvi.Random
   , randLog
   , print 
   , printMany 
-  , Gen
+  , Silvi
   ) where
 
 import qualified Chronos
@@ -38,6 +38,8 @@ import qualified Network.HTTP.Types.Method  as HttpM
 import qualified Network.HTTP.Types.Status  as HttpS
 import           Network.HTTP.Types.Version (http09, http10, http11, http20)
 import qualified Network.HTTP.Types.Version as HttpV
+
+type Silvi a = Gen (Rec Value a)
 
 rand :: SingField a -> Gen (Value a)
 rand = \case

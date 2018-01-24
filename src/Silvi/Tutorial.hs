@@ -38,12 +38,11 @@ module Silvi.Tutorial
     -- $rand_logs
     --
     --
-    randSimpleLog
-  , main
+    main
   ) where
 
-import           Silvi.Random (randLog, printMany, Gen)
-import           Silvi.Record (Field (..), Value (..), Rec(..))
+import           Silvi.Random (randLog, printMany, Silvi)
+import           Silvi.Record (Field (..))
 
 --------------------------------------------------------------------------------
 
@@ -64,7 +63,7 @@ import           Silvi.Record (Field (..), Value (..), Rec(..))
 --
 -- @
 -- import Silvi.Random
--- import Silvi.Record
+-- import Silvi.Record (Field(..))
 -- @
 -- 
 
@@ -85,28 +84,42 @@ type SimpleLog = '[ 'FieldIPv4
                   ]
 
 type AdvancedLog = '[ 'FieldBracketNum
-                    , 'FieldTimestamp
-                    , 'FieldIPv4
+                    , 'FieldHttpMethod
+                    , 'FieldHttpStatus
+                    , 'FieldHttpVersion
                     , 'FieldUrl
+                    , 'FieldUserId
+                    , 'FieldObjSize
+                    , 'FieldIPv4
+                    , 'FieldIPv6
                     ] 
+
+type SegFaultLog = '[ 'FieldTimestamp ]
 
 ---------------------------------------------------------------------------------
 
 -- $rand_logs
 -- >
 -- > -- 'randSimpleLog' now contains a SimpleLog with randomised inhabitants of the IPv4 and URL types.
--- > randSimpleLog :: Gen (Rec Value as)
+-- > randSimpleLog :: Silvi SimpleLog
 -- > randSimpleLog = randLog @SimpleLog
 -- > 
 -- > -- 'main' will print out 1000 'SimpleLog's.
 -- > main :: IO ()
 -- > main = printMany 1000 randSimpleLog
 
-randSimpleLog :: Gen (Rec Value SimpleLog)
+randSimpleLog :: Silvi SimpleLog 
 randSimpleLog = randLog @SimpleLog
 
-randAdvancedLog :: Gen (Rec Value AdvancedLog)
+randAdvancedLog :: Silvi AdvancedLog
 randAdvancedLog = randLog @AdvancedLog
 
+randSegFaultLog :: Silvi SegFaultLog
+randSegFaultLog = randLog @SegFaultLog
+
 main :: IO ()
-main = printMany 10 randAdvancedLog
+main = do
+  printMany 10 randSimpleLog
+  printMany 10 randAdvancedLog
+  -- this will segfault (seemingly invariably) 
+  -- printMany 1 randSegFaultLog
