@@ -19,10 +19,8 @@ module Silvi.Random
 import qualified Chronos
 import           Chronos.Types
 import           Control.Applicative        (liftA2)
-import           Control.Monad              (replicateM_)
-import           Control.Monad.IO.Class     (MonadIO(..))
+import           Control.Monad              (join, replicateM_)
 import           Data.Exists                (Reify (..), SingList (..))
-import           Data.Text                  (Text)
 import           Net.IPv4                   (ipv4)
 import           Net.IPv6                   (ipv6)
 import           Net.Types                  (IPv4(..),IPv6(..))
@@ -31,8 +29,7 @@ import qualified Network.HTTP.Types.Status  as HttpS
 import           Network.HTTP.Types.Version (http09, http10, http11, http20)
 import qualified Network.HTTP.Types.Version as HttpV
 import           Savage
-import           Savage.Internal.Gen        (printOnly)
-import           Savage.Randy               (element, enum, enumBounded, int, word8, word16)
+import           Savage.Randy               (sample, element, enum, enumBounded, int, word8, word16)
 import           Savage.Range               (constantBounded)
 import qualified Silvi.Encode               as E
 import           Silvi.Record               (SingField (..), Value (..))
@@ -60,29 +57,13 @@ randLog = randLogExplicit (fromSingList (reify :: SingList as))
 randLogExplicit :: Rec SingField rs -> Gen (Rec Value rs)
 randLogExplicit = Topaz.traverse rand
 
---print :: E.Encode a => Gen (Value a) -> IO ()
---print gen = fmap (print . p)
+print :: Gen (Rec Value as) -> IO ()
+print gen = join $ sample $ fmap (Topaz.traverse_ E.print) gen
 
---p :: Value a -> Text
---p = \case
---  ValueBracketNum x -> encode x
---  ValueHttpMethod x -> encode x
---  ValueHttpStatus x -> encode x
---  ValueUrl        x -> encode x
---  ValueUserId     x -> encode x
---  ValueObjSize    x -> encode x
---  ValueIPv4       x -> encode x
---  ValueIPv6       x -> encode x
---  ValueTimestamp  x -> encode x
+--print :: (MonadIO m, Show a) => Gen a -> m ()
+--print = printOnly
 
-
---printLogExplicit :: (MonadIO m, Encode a) => Gen a -> m ()
---printLogExplicit = Topaz.traverse print
-
-print :: (MonadIO m, Show a) => Gen a -> m ()
-print = printOnly
-
-printMany :: (MonadIO m, Show a) => Int -> Gen a -> m ()
+printMany :: Int -> Gen (Rec Value as) -> IO ()
 printMany n gen = replicateM_ n (print gen)
 
 randomIPv4 :: Gen IPv4

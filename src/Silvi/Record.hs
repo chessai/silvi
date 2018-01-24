@@ -106,12 +106,13 @@ instance Reify 'FieldTimestamp where
 
 instance Encode (Value a) where
   encode = \case
-    ValueBracketNum x -> encode x
-    ValueHttpMethod x -> encode x
-    ValueHttpStatus x -> encode x
-    ValueUrl        x -> encode x
-    ValueUserId     x -> encode x
-    ValueObjSize    x -> encode x
-    ValueIPv4       x -> encode x
-    ValueIPv6       x -> encode x
-    ValueTimestamp  x -> encode x 
+    ValueBracketNum  x -> encode x
+    ValueHttpMethod  x -> encode x
+    ValueHttpStatus  x -> encode x
+    ValueHttpVersion x -> encode x 
+    ValueUrl         x -> encode x
+    ValueUserId      x -> encode x
+    ValueObjSize     x -> encode x
+    ValueIPv4        x -> encode x
+    ValueIPv6        x -> encode x
+    ValueTimestamp   x -> encode x 
