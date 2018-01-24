@@ -84,6 +84,12 @@ type SimpleLog = '[ 'FieldIPv4
                   , 'FieldUrl
                   ]
 
+type AdvancedLog = '[ 'FieldBracketNum
+                    , 'FieldTimestamp
+                    , 'FieldIPv4
+                    , 'FieldUrl
+                    ] 
+
 ---------------------------------------------------------------------------------
 
 -- $rand_logs
@@ -99,5 +105,8 @@ type SimpleLog = '[ 'FieldIPv4
 randSimpleLog :: Gen (Rec Value SimpleLog)
 randSimpleLog = randLog @SimpleLog
 
+randAdvancedLog :: Gen (Rec Value AdvancedLog)
+randAdvancedLog = randLog @AdvancedLog
+
 main :: IO ()
-main = printMany 1000 randSimpleLog
+main = printMany 10 randAdvancedLog

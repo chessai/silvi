@@ -42,6 +42,12 @@ class Encode a where
   default encode :: Show a => a -> Text
   encode = T.pack . show
 
+instance Encode Text where
+  encode = id
+
+instance Encode String where
+  encode = T.pack
+
 instance Encode Int where
 
 instance Encode Int8 where
