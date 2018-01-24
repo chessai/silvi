@@ -38,7 +38,7 @@ class Encode a where
   print  :: a -> IO ()
 
   default print :: a -> IO ()
-  print = TIO.putStrLn . encode
+  print x = TIO.putStr $ (encode x) `T.append` " "
   default encode :: Show a => a -> Text
   encode = T.pack . show
 

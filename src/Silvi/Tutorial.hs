@@ -100,4 +100,4 @@ randSimpleLog :: Gen (Rec Value SimpleLog)
 randSimpleLog = randLog @SimpleLog
 
 main :: IO ()
-main = printMany 10 randSimpleLog
+main = printMany 1000 randSimpleLog

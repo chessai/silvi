@@ -18,25 +18,26 @@ module Silvi.Random
 
 import qualified Chronos
 import           Chronos.Types
-import           Control.Applicative        (liftA2)
-import           Control.Monad              (join, replicateM_)
-import           Data.Exists                (Reify (..), SingList (..))
-import           Net.IPv4                   (ipv4)
-import           Net.IPv6                   (ipv6)
-import           Net.Types                  (IPv4(..),IPv6(..))
+import           Control.Applicative (liftA2)
+import           Control.Monad       (join, replicateM_)
+import           Data.Exists         (Reify (..), SingList (..))
+import qualified Data.Text.IO        as TIO
+import           Net.IPv4            (ipv4)
+import           Net.IPv6            (ipv6)
+import           Net.Types           (IPv4(..),IPv6(..))
+import           Savage
+import           Savage.Randy        (sample, element, enum, enumBounded, int, word8, word16)
+import           Savage.Range        (constantBounded)
+import qualified Silvi.Encode        as E
+import           Silvi.Record        (SingField (..), Value (..))
+import           Silvi.Types 
+import           Topaz.Rec           (Rec (..), fromSingList)
+import qualified Topaz.Rec           as Topaz
+import           Prelude             hiding (print)
 import qualified Network.HTTP.Types.Method  as HttpM
 import qualified Network.HTTP.Types.Status  as HttpS
 import           Network.HTTP.Types.Version (http09, http10, http11, http20)
 import qualified Network.HTTP.Types.Version as HttpV
-import           Savage
-import           Savage.Randy               (sample, element, enum, enumBounded, int, word8, word16)
-import           Savage.Range               (constantBounded)
-import qualified Silvi.Encode               as E
-import           Silvi.Record               (SingField (..), Value (..))
-import           Silvi.Types                
-import           Topaz.Rec                  (Rec (..), fromSingList)
-import qualified Topaz.Rec                  as Topaz
-import           Prelude                    hiding (print)
 
 rand :: SingField a -> Gen (Value a)
 rand = \case
@@ -60,11 +61,8 @@ randLogExplicit = Topaz.traverse rand
 print :: Gen (Rec Value as) -> IO ()
 print gen = join $ sample $ fmap (Topaz.traverse_ E.print) gen
 
---print :: (MonadIO m, Show a) => Gen a -> m ()
---print = printOnly
-
 printMany :: Int -> Gen (Rec Value as) -> IO ()
-printMany n gen = replicateM_ n (print gen)
+printMany n gen = replicateM_ n (print gen >> TIO.putStrLn "")
 
 randomIPv4 :: Gen IPv4
 randomIPv4 = ipv4
