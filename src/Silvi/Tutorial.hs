@@ -39,6 +39,7 @@ module Silvi.Tutorial
     --
     --
     main
+  , segfault 
   ) where
 
 import           Silvi.Random (randLog, printMany, Silvi)
@@ -117,9 +118,11 @@ randAdvancedLog = randLog @AdvancedLog
 randSegFaultLog :: Silvi SegFaultLog
 randSegFaultLog = randLog @SegFaultLog
 
+-- this will segfault invariably
+segfault :: IO ()
+segfault = printMany 1 randSegFaultLog 
+
 main :: IO ()
 main = do
   printMany 10 randSimpleLog
   printMany 10 randAdvancedLog
-  -- this will segfault (seemingly invariably) 
-  -- printMany 1 randSegFaultLog
