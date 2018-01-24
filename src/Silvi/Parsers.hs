@@ -1,25 +1,19 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Silvi.Parsers 
-  (
+  ( parseIPv4
+  , parseIPv6
+  , parseHttpMethod
   ) where
 
-import Silvi.Types
+{-# OPTIONS_GHC -Wall #-}
 
-import qualified Chronos
-import           Chronos.Types 
-  ( OffsetDatetime(..)
-  , OffsetFormat(..)
-  , DatetimeFormat(..))
 import Control.Applicative
-import Data.Attoparsec.Text 
-  ( asciiCI
-  , decimal
-  , Parser
-  , takeTill)
-import Data.Maybe
+import Data.Attoparsec.Text (asciiCI, decimal, takeTill, Parser) 
 import Data.Text (Text)
-import Net.IPv4 (ipv4)
+import Net.Types (IPv4, IPv6)
+import qualified Net.IPv4 as I4
+import qualified Net.IPv6 as I6
 import qualified Network.HTTP.Types.Method as HttpM
 import qualified Network.HTTP.Types.Status as HttpS
 import qualified Network.HTTP.Types.Version as HttpV
@@ -40,28 +34,28 @@ slash        = Atto.char '/'
 space        = Atto.char ' '
 
 parseIPv4 :: Parser IPv4
-parseIPv4 = ipv4
-  <$> (decimal <* period)
-  <*> (decimal <* period)
-  <*> (decimal <* period)
-  <*> decimal
- 
-parseHttpMethod :: Parser HttpM.StdMethod
+parseIPv4 = I4.parser
+
+parseIPv6 :: Parser IPv6
+parseIPv6 = I6.parser
+
+parseHttpMethod :: Parser HttpM.Method
 parseHttpMethod = do
-      (asciiCI "GET"     *> pure methodGet    )
-  <|> (asciiCI "POST"    *> pure methodPost   ) 
-  <|> (asciiCI "HEAD"    *> pure methodHead   )
-  <|> (asciiCI "PUT"     *> pure methodPut    )
-  <|> (asciiCI "DELETE"  *> pure methodDelete )
-  <|> (asciiCI "TRACE"   *> pure methodTrace  )
-  <|> (asciiCI "CONNECT" *> pure methodConnect)
-  <|> (asciiCI "OPTIONS" *> pure methodOptions)
-  <|> (asciiCI "PATCH"   *> pure methodPatch  )
+      (asciiCI "GET"     *> pure HttpM.methodGet    )
+  <|> (asciiCI "POST"    *> pure HttpM.methodPost   ) 
+  <|> (asciiCI "HEAD"    *> pure HttpM.methodHead   )
+  <|> (asciiCI "PUT"     *> pure HttpM.methodPut    )
+  <|> (asciiCI "DELETE"  *> pure HttpM.methodDelete )
+  <|> (asciiCI "TRACE"   *> pure HttpM.methodTrace  )
+  <|> (asciiCI "CONNECT" *> pure HttpM.methodConnect)
+  <|> (asciiCI "OPTIONS" *> pure HttpM.methodOptions)
+  <|> (asciiCI "PATCH"   *> pure HttpM.methodPatch  )
   <|> fail "Invalid HTTP Method"
 
-parseHttpStatus :: Parser HttpStatus
+parseHttpStatus :: Parser HttpS.Status
 parseHttpStatus = toEnum <$> decimal
 
+{-
 parseHttpProtocol :: Parser HttpProtocol
 parseHttpProtocol = 
       (asciiCI "HTTPS" *> pure HTTPS)
@@ -98,3 +92,4 @@ parseOffsetDatetime = do
   pure odt
   where offsetFormat = OffsetFormatColonOff
         datetimeFormat = DatetimeFormat (Just '/') (Just ':') (Just ':')
+-}

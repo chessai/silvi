@@ -31,6 +31,7 @@ source-repository head
 library
     hs-source-dirs:        src
     build-depends:         base           >= 4.9    && < 5.0
+                         , attoparsec 
                          , bytestring
                          , chronos        >= 1.0.1   && < 1.0.3
                          , http-types     >= 0.11   && < 0.13
@@ -41,6 +42,7 @@ library
                          , transformers
     exposed-modules:       Silvi
                          , Silvi.Encode 
+                         , Silvi.Parsers 
                          , Silvi.Random
                          , Silvi.Record
                          , Silvi.Types
