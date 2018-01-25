@@ -5,7 +5,7 @@ module Silvi.Types
   , UserId(..)
   , ObjSize(..)
   , BracketNum(..)
-  , Silvi 
+--  , Silvi 
   ) where
 
 {-# OPTIONS_GHC -Wall #-}
@@ -17,4 +17,4 @@ import           Savage
 import           Silvi.Internal.Types
 import           Silvi.Record (Field(..), Value(..), SingField(..), Rec(..))
 
-type Silvi a = Gen (Rec Value a)
+--type Silvi a = Gen (Rec Value a)

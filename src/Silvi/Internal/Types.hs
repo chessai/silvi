@@ -5,7 +5,7 @@ module Silvi.Internal.Types
   , UserId(..)
   , ObjSize(..)
   , BracketNum(..)
-  , Silvi 
+--  , Silvi 
   ) where
 
 {-# OPTIONS_GHC -Wall #-}
@@ -15,9 +15,9 @@ import           Data.Text (Text)
 import           Data.Word (Word16, Word8)
 import           Savage
 import           Topaz.Rec (Rec(..))
-import           Silvi.Record (Field(..), Value(..), SingField(..), Rec(..))
+--import           Silvi.Record (Field(..), Value(..), SingField(..), Rec(..))
 
-type Silvi a = Gen (Rec Value a)
+--type Silvi a = Gen (Rec Value a)
 
 -- | Url type.
 newtype Url = Url { getUrl :: Text }

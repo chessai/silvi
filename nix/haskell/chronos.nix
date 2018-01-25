@@ -5,11 +5,11 @@
 }:
 mkDerivation {
   pname = "chronos";
-  version = "1.0.1";
+  version = "1.0.2";
   src = fetchgit {
     url = "https://github.com/andrewthad/chronos.git";
-    sha256 = "151m28xx97yklfqsykwd4nsb8kzvzg4yrrr7w4gin69jv8pvswnk";
-    rev = "87c40d22df69ec9a475ede5676bd362e12682db8";
+    sha256 = "02xw3x5h8dmkbv3qbv58svrnqaakipw33fxv748jqqlw1bwif0y2";
+    rev = "8abfa643056c6dda3bfaa4535dfc6471fe4d5765";
   };
   libraryHaskellDepends = [
     aeson attoparsec base bytestring clock hashable primitive text
