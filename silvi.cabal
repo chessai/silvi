@@ -33,13 +33,12 @@ library
     build-depends:         base           >= 4.9    && < 5.0
                          , attoparsec 
                          , bytestring
-                         , chronos        >= 1.0.1   
-                         , http-types     >= 0.11   && < 0.13
-                         , ip             >= 1.1.1  && < 2.0
-                         , quantification >= 0.3    && < 0.5
-                         , savage         >= 1.0.3  && < 2.0
+                         , chronos 
+                         , http-types
+                         , ip
+                         , quantification
+                         , savage
                          , text
-                         , transformers
     exposed-modules:       Silvi
                          , Silvi.Encode 
                          , Silvi.Parsers 

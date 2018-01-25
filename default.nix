@@ -33,10 +33,10 @@ let
       });
       vector     = cp "vector";
       # appendConfigureFlag (cp "vector") "-f unsafechecks"; 
-      # http-types = cp "http-types";
-      # chronos    = cp "chronos";
-      # savage     = cp "savage"; 
-      # ip         = cp "ip"; 
+      http-types = cp "http-types";
+      chronos    = cp "chronos";
+      savage     = cp "savage"; 
+      ip         = cp "ip"; 
       silvi      = build "silvi" ./.;
       
     };
