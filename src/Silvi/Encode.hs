@@ -31,7 +31,7 @@ import           Savage.Internal.Tree (Tree(..), Node(..))
 import qualified Savage.Internal.Tree as Tree
 import           Savage.Range (Size, Range)
 import qualified Savage.Range as Range
-import           Silvi.Types
+import           Silvi.Internal.Types
 
 class Encode a where
   encode :: a -> Text

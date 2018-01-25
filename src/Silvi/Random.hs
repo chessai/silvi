@@ -13,7 +13,6 @@ module Silvi.Random
   , randLog
   , print 
   , printMany 
-  , Silvi
   ) where
 
 import qualified Chronos
@@ -29,8 +28,8 @@ import           Savage
 import           Savage.Randy        (sample, element, enum, enumBounded, int, word8, word16)
 import           Savage.Range        (constantBounded)
 import qualified Silvi.Encode        as E
-import           Silvi.Record        (SingField (..), Value (..))
-import           Silvi.Types 
+import           Silvi.Record        (Field(..), SingField (..), Value (..))
+import           Silvi.Internal.Types 
 import           Topaz.Rec           (Rec (..), fromSingList)
 import qualified Topaz.Rec           as Topaz
 import           Prelude             hiding (print)
@@ -38,8 +37,6 @@ import qualified Network.HTTP.Types.Method  as HttpM
 import qualified Network.HTTP.Types.Status  as HttpS
 import           Network.HTTP.Types.Version (http09, http10, http11, http20)
 import qualified Network.HTTP.Types.Version as HttpV
-
-type Silvi a = Gen (Rec Value a)
 
 rand :: SingField a -> Gen (Value a)
 rand = \case
@@ -53,15 +50,22 @@ rand = \case
   SingIPv4        -> ValueIPv4        <$> randomIPv4
   SingIPv6        -> ValueIPv6        <$> randomIPv6 
   SingTimestamp   -> ValueTimestamp   <$> randomOffsetDatetime
+  SingOffset      -> ValueOffset      <$> randomOffset
+  SingDatetime    -> ValueDatetime    <$> randomDatetime
+  SingDate        -> ValueDate        <$> randomDate
+  SingYear        -> ValueYear        <$> randomYear 1996 2021
+  SingMonth       -> ValueMonth       <$> randomMonth 0 11
+  SingDayOfMonth  -> ValueDayOfMonth  <$> randomDayOfMonth 0 28
+  SingTimeOfDay   -> ValueTimeOfDay   <$> randomTimeOfDay
 
-randLog :: forall as. (Reify as) => Gen (Rec Value as)
+randLog :: forall as. (Reify as) => Silvi as
 randLog = randLogExplicit (fromSingList (reify :: SingList as))
 
-randLogExplicit :: Rec SingField rs -> Gen (Rec Value rs)
+randLogExplicit :: Rec SingField rs -> Silvi rs
 randLogExplicit = Topaz.traverse rand
 
 print :: Gen (Rec Value as) -> IO ()
-print gen = join $ sample $ fmap (Topaz.traverse_ E.print) gen
+print = join . sample . fmap (Topaz.traverse_ E.print)
 
 printMany :: Int -> Gen (Rec Value as) -> IO ()
 printMany n gen = replicateM_ n (print gen >> TIO.putStrLn "")
@@ -120,7 +124,7 @@ randomDate :: Gen Date
 randomDate = do
   let year  = randomYear 1995 2021
       month = Month <$> int constantBounded
-      day = randomDay 1 =<< liftA2 daysUpperBound year month
+      day = randomDayOfMonth 1 =<< liftA2 daysUpperBound year month
   Date <$> year <*> month <*> day
   where daysUpperBound :: Year -> Month -> Int
         daysUpperBound y m = Chronos.daysInMonth (Chronos.isLeapYear y) m
@@ -130,15 +134,15 @@ randomYear :: Int -- ^ Origin year
            -> Gen Year
 randomYear a b = Year <$> enum (min a b) (max a b)
 
---randomMonth :: Int -- ^ Origin month
---            -> Int -- ^ End month
---            -> Gen Month
---randomMonth a b = Month <$> enum (min a b) (max a b)
+randomMonth :: Int -- ^ Origin month
+            -> Int -- ^ End month
+            -> Gen Month
+randomMonth a b = Month <$> enum (min a b) (max a b)
 
-randomDay :: Int -- ^ Origin Day
+randomDayOfMonth :: Int -- ^ Origin Day
           -> Int -- ^ End day
           -> Gen DayOfMonth
-randomDay a b = DayOfMonth <$> enum (min a b) (max a b)
+randomDayOfMonth a b = DayOfMonth <$> enum (min a b) (max a b)
 
 randomOffsetDatetime :: Gen OffsetDatetime
 randomOffsetDatetime = OffsetDatetime
@@ -152,14 +156,14 @@ randomOffset = element offsets
 -- | List of Time Zone Offsets. See:
 --   https://en.wikipedia.org/wiki/List_of_time_zone_abbreviations
 offsets :: [Offset]
-offsets = map Offset [100,200,300,330,400,430,500,530,545,600,630,700,800,845,900,930,1000,1030,1100,1200,1245,1300,1345,1400,0,-100,-200,-230,-300,-330,-400,-500,-600,-700,-800,-900,-930,-1000,-1100,-1200]
+offsets = fmap Offset [100,200,300,330,400,430,500,530,545,600,630,700,800,845,900,930,1000,1030,1100,1200,1245,1300,1345,1400,0,-100,-200,-230,-300,-330,-400,-500,-600,-700,-800,-900,-930,-1000,-1100,-1200]
 
 -- | List of sample Useridents.
 userIdents :: [UserId]
-userIdents = map UserId ["-","andrewthad","cement","chessai"]
+userIdents = fmap UserId ["-","andrewthad","cement","chessai"]
 
 -- | List of sample URLs.
 urls :: [Url]
-urls = map Url ["https://github.com","https://youtube.com","layer3com.com"]
+urls = fmap Url ["https://github.com","https://youtube.com","layer3com.com"]
 
 

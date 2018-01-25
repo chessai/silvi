@@ -33,9 +33,9 @@ library
     build-depends:         base           >= 4.9    && < 5.0
                          , attoparsec 
                          , bytestring
-                         , chronos        >= 1.0.1   && < 1.0.3
+                         , chronos        >= 1.0.1   
                          , http-types     >= 0.11   && < 0.13
-                         , ip             >= 1.0    && < 2.0
+                         , ip             >= 1.1.1  && < 2.0
                          , quantification >= 0.3    && < 0.5
                          , savage         >= 1.0.3  && < 2.0
                          , text
@@ -47,6 +47,7 @@ library
                          , Silvi.Record
                          , Silvi.Types
                          , Silvi.Tutorial 
+    other-modules:         Silvi.Internal.Types 
     default-language:      Haskell2010
     other-extensions:     
 
