@@ -2,6 +2,15 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TypeApplications #-}
 
+import Savage
+import Silvi.Internal.Types
+import Silvi.Record
+import Control.Monad
+import Savage.Internal.Gen
+import Silvi.Random
+import qualified Topaz.Rec as Topaz
+import qualified Silvi.Encode as E
+
 type SegfaultLog = '[ 'FieldTimestamp ]
 
 type OffsetLog = '[ 'FieldOffset ]

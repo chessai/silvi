@@ -1,0 +1,21 @@
+resolver: lts-10.3
+packages:
+- '.'
+- location:
+    git:    'https://github.com/chessai/savage'
+    commit: '2e6a7298854224a30c83515160663f2e6104a611'
+  extra-dep: true
+- location:
+    git:    'https://github.com/andrewthad/haskell-ip'
+    commit: 'f77cda50027cda9c7efc21005c5bc489287b82e9'
+  extra-dep: true
+extra-deps:
+- 'chronos-1.0.1'
+- 'http-types-0.11'
+- 'quantification-0.3'
+- 'torsor-0.1'
+flags:
+  vector:
+    unsafechecks: true
+    internalchecks: true
+

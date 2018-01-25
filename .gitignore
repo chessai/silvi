@@ -8,3 +8,5 @@ todo.txt
 sample/*
 sample*
 *.txt
+.stack-work/
+test.prof
