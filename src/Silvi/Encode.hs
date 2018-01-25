@@ -1,5 +1,7 @@
 {-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE GADTs #-}
+{-# LANGUAGE LambdaCase        #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TypeSynonymInstances #-}
 
@@ -10,9 +12,7 @@ module Silvi.Encode
 {-# OPTIONS_GHC -Wall #-}
 
 import           Chronos.Types
-import           Control.Monad.IO.Class (MonadIO(..))
 import           Data.Int
-import           Data.Functor.Identity (runIdentity)
 import           Data.Text    (Text)
 import qualified Data.Text    as T
 import qualified Data.Text.IO as TIO
@@ -23,15 +23,7 @@ import           Net.Types    (IPv4, IPv6)
 import qualified Network.HTTP.Types.Method as HttpM
 import qualified Network.HTTP.Types.Status as HttpS
 import qualified Network.HTTP.Types.Version as HttpV
-import           Savage
-import qualified Savage.Internal.Gen as Gen 
-import           Savage.Internal.Seed (Seed)
-import           Savage.Internal.Seed as Seed
-import           Savage.Internal.Tree (Tree(..), Node(..))
-import qualified Savage.Internal.Tree as Tree
-import           Savage.Range (Size, Range)
-import qualified Savage.Range as Range
-import           Silvi.Internal.Types
+import           Silvi.Types
 
 class Encode a where
   encode :: a -> Text
@@ -41,6 +33,26 @@ class Encode a where
   print x = TIO.putStr $ (encode x) `T.append` " "
   default encode :: Show a => a -> Text
   encode = T.pack . show
+
+instance Encode (Value a) where
+  encode = \case
+    ValueBracketNum  x -> encode x
+    ValueHttpMethod  x -> encode x
+    ValueHttpStatus  x -> encode x
+    ValueHttpVersion x -> encode x 
+    ValueUrl         x -> encode x
+    ValueUserId      x -> encode x
+    ValueObjSize     x -> encode x
+    ValueIPv4        x -> encode x
+    ValueIPv6        x -> encode x
+    ValueTimestamp   x -> encode x
+    ValueOffset      x -> encode x
+    ValueDatetime    x -> encode x 
+    ValueDate        x -> encode x
+    ValueYear        x -> encode x
+    ValueMonth       x -> encode x
+    ValueDayOfMonth  x -> encode x
+    ValueTimeOfDay   x -> encode x
 
 instance Encode Text where
   encode = id

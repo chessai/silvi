@@ -11,9 +11,8 @@
 module Silvi.Random
   ( randLogExplicit
   , randLog
-  , print 
-  , printMany 
-  , Silvi 
+  , printLog 
+  , printLogMany 
   ) where
 
 import qualified Chronos
@@ -26,20 +25,16 @@ import           Net.IPv4            (ipv4)
 import           Net.IPv6            (ipv6)
 import           Net.Types           (IPv4(..),IPv6(..))
 import           Savage
-import           Savage.Randy        (sample, element, enum, enumBounded, int, word8, word16)
+import           Savage.Randy        (sample, element, enum, enumBounded, word8, word16)
 import           Savage.Range        (constantBounded)
 import qualified Silvi.Encode        as E
-import           Silvi.Record        (Field(..), SingField (..), Value (..))
-import           Silvi.Internal.Types 
+import           Silvi.Types
 import           Topaz.Rec           (Rec (..), fromSingList)
 import qualified Topaz.Rec           as Topaz
-import           Prelude             hiding (print)
 import qualified Network.HTTP.Types.Method  as HttpM
 import qualified Network.HTTP.Types.Status  as HttpS
 import           Network.HTTP.Types.Version (http09, http10, http11, http20)
 import qualified Network.HTTP.Types.Version as HttpV
-
-type Silvi a = Gen (Rec Value a)
 
 rand :: SingField a -> Gen (Value a)
 rand = \case
@@ -67,11 +62,11 @@ randLog = randLogExplicit (fromSingList (reify :: SingList as))
 randLogExplicit :: Rec SingField rs -> Silvi rs
 randLogExplicit = Topaz.traverse rand
 
-print :: Gen (Rec Value as) -> IO ()
-print = join . sample . fmap (Topaz.traverse_ E.print)
+printLog :: Silvi as -> IO ()
+printLog = join . sample . fmap (Topaz.traverse_ E.print)
 
-printMany :: Int -> Gen (Rec Value as) -> IO ()
-printMany n gen = replicateM_ n (print gen >> TIO.putStrLn "")
+printLogMany :: Int -> Silvi as -> IO ()
+printLogMany n gen = replicateM_ n (printLog gen >> TIO.putStrLn "")
 
 randomIPv4 :: Gen IPv4
 randomIPv4 = ipv4
@@ -126,7 +121,7 @@ randomTimeOfDay = TimeOfDay
 randomDate :: Gen Date
 randomDate = do
   let year  = randomYear 1995 2021
-      month = Month <$> int constantBounded
+      month = enumBounded
       day = randomDayOfMonth 1 =<< liftA2 daysUpperBound year month
   Date <$> year <*> month <*> day
   where daysUpperBound :: Year -> Month -> Int
