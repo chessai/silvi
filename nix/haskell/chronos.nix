@@ -1,16 +1,12 @@
 { mkDerivation, aeson, attoparsec, base, bytestring, clock
-, fetchgit, hashable, HUnit, primitive, QuickCheck, stdenv
-, test-framework, test-framework-hunit, test-framework-quickcheck2
-, text, torsor, vector
+, hashable, HUnit, primitive, QuickCheck, stdenv, test-framework
+, test-framework-hunit, test-framework-quickcheck2, text, torsor
+, vector
 }:
 mkDerivation {
   pname = "chronos";
-  version = "1.0.2";
-  src = fetchgit {
-    url = "https://github.com/andrewthad/chronos.git";
-    sha256 = "02xw3x5h8dmkbv3qbv58svrnqaakipw33fxv748jqqlw1bwif0y2";
-    rev = "8abfa643056c6dda3bfaa4535dfc6471fe4d5765";
-  };
+  version = "1.0.1";
+  sha256 = "928de836002ca300d756912a800c53ac4ee520e4de4cda9449750673b59572ed";
   libraryHaskellDepends = [
     aeson attoparsec base bytestring clock hashable primitive text
     torsor vector

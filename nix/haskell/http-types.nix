@@ -1,14 +1,10 @@
 { mkDerivation, array, base, bytestring, case-insensitive, doctest
-, fetchgit, hspec, QuickCheck, quickcheck-instances, stdenv, text
+, hspec, QuickCheck, quickcheck-instances, stdenv, text
 }:
 mkDerivation {
   pname = "http-types";
   version = "0.11";
-  src = fetchgit {
-    url = "https://github.com/aristidb/http-types.git";
-    sha256 = "081mmqr96853z5pv214ijqcg7mx1z68ybdbz52zj35i307ic1lch";
-    rev = "12d9b9f7b1fea81298a033f1bedd7a8e9027963f";
-  };
+  sha256 = "5ab39721547d44db2662efc98996a5af42e88dac58aa18a4806b9e185c068323";
   libraryHaskellDepends = [
     array base bytestring case-insensitive text
   ];
