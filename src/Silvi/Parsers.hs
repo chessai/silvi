@@ -5,14 +5,22 @@ module Silvi.Parsers
   , parseIPv6
   , parseHttpMethod
   , parseHttpStatus 
+  , parseHttpVersion 
+  , parseHttpProtocol 
+  , parseUserIdent 
+  , parseUrl 
+  , parseTimestamp 
   ) where
 
 {-# OPTIONS_GHC -Wall #-}
 
+import Chronos
+import Chronos.Types
 import Control.Applicative
 import Data.Attoparsec.Text (asciiCI, decimal, takeTill, Parser) 
 import Data.Text (Text)
 import Net.Types (IPv4, IPv6)
+import Silvi.Types
 import qualified Net.IPv4 as I4
 import qualified Net.IPv6 as I6
 import qualified Network.HTTP.Types.Method as HttpM
@@ -56,7 +64,6 @@ parseHttpMethod = do
 parseHttpStatus :: Parser HttpS.Status
 parseHttpStatus = toEnum <$> decimal
 
-{-
 parseHttpProtocol :: Parser HttpProtocol
 parseHttpProtocol = 
       (asciiCI "HTTPS" *> pure HTTPS)
@@ -64,33 +71,32 @@ parseHttpProtocol =
   <|> (asciiCI "FTP"   *> pure FTP  )
   <|> fail "Invalid HTTP Protocol"
 
-parseHttpProtocolVersion :: Parser HttpProtocolVersion
-parseHttpProtocolVersion = HttpVersion
+parseHttpVersion :: Parser HttpV.HttpVersion
+parseHttpVersion = HttpV.HttpVersion
   <$> decimal 
   <*> (period *> decimal)
 
-parseUserident :: Parser (Maybe Text)
-parseUserident = do
+parseUserIdent :: Parser (Maybe Text)
+parseUserIdent = do
   ident <- takeTill (== ' ')
   pure $ if ((T.length ident) == 1) && (T.head ident) == '-' then Nothing else Just ident
 
 parseObjSize :: Parser Int
 parseObjSize = decimal <* space
 
-parseQuote :: Parser (Maybe Text)
-parseQuote = fmap refTest (quote *> takeTill (== '"') <* quote)
-  where refTest r = if (T.length r == 0) then Nothing else Just r
+--parseQuote :: Parser (Maybe Text)
+--parseQuote = fmap refTest (quote *> takeTill (== '"') <* quote)
+--  where refTest r = if (T.length r == 0) then Nothing else Just r
 
 parseUrl :: Parser Text
 parseUrl = takeTill (== ' ')
 
 --[dd/mm/yyyy:hh:mm:ss -zzzz]
-parseOffsetDatetime :: Parser OffsetDatetime
-parseOffsetDatetime = do
+parseTimestamp :: Parser OffsetDatetime
+parseTimestamp = do
   leftBracket
   odt <- parser_DmyHMSz (offsetFormat) (datetimeFormat)
   rightBracket
   pure odt
   where offsetFormat = OffsetFormatColonOff
         datetimeFormat = DatetimeFormat (Just '/') (Just ':') (Just ':')
--}
