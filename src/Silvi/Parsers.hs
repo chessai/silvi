@@ -4,6 +4,7 @@ module Silvi.Parsers
   ( parseIPv4
   , parseIPv6
   , parseHttpMethod
+  , parseHttpStatus 
   ) where
 
 {-# OPTIONS_GHC -Wall #-}

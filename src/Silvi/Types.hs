@@ -16,9 +16,10 @@ module Silvi.Types
   , UserId(..)
   , ObjSize(..)
   , BracketNum(..)
+  , HttpProtocol(..) 
   , Field(..)
   , Value(..)
-  , SingField(..)
+  , SingField(..) 
   , Silvi 
   ) where
 
@@ -43,45 +44,48 @@ data Field
   | FieldHttpMethod          -- ^ More explicit name for Network.HTTP.Types.Method
   | FieldHttpStatus          -- ^ More explicit name for Network.HTTP.Types.Status
   | FieldHttpVersion         -- ^ More explicit name for Network.HTTP.Types.Version
+  | FieldHttpProtocol        -- ^ HTTP/2, HTTP, FTP 
   | FieldUrl                 -- ^ a url, e.g. "https://hackage.haskell.org"
   | FieldUserId              -- ^ userId as Text
   | FieldObjSize             -- ^ usually requested resource size
   | FieldIPv4                -- ^ IPv4 present in log
   | FieldIPv6                -- ^ IPv6 address
   | FieldTimestamp           -- ^ Timestamp
-  | FieldOffset
-  | FieldDatetime
-  | FieldDate
-  | FieldYear
-  | FieldMonth
-  | FieldDayOfMonth
-  | FieldTimeOfDay
+  | FieldOffset              -- ^ Time offset (from UTC)
+  | FieldDatetime            -- ^ Date (YYyy/Mm/Dd) ++ TimeOfDay (Hh:Mm:Ss)
+  | FieldDate                -- ^ Date (YYyy/Mm/Dd)
+  | FieldYear                -- ^ Year (YYyy/_/_)
+  | FieldMonth               -- ^ Month (_/Mm/_) 
+  | FieldDayOfMonth          -- ^ DayOfMonth (_/_/Dd)
+  | FieldTimeOfDay           -- ^ (Hh:Mm:Ss) 
   deriving (Bounded,Enum,Eq,Generic,Ord,Read,Show)
 
 data Value :: Field -> Type where
-  ValueBracketNum  :: BracketNum        -> Value 'FieldBracketNum
-  ValueHttpMethod  :: HttpM.StdMethod   -> Value 'FieldHttpMethod
-  ValueHttpStatus  :: HttpS.Status      -> Value 'FieldHttpStatus
-  ValueHttpVersion :: HttpV.HttpVersion -> Value 'FieldHttpVersion
-  ValueUrl         :: Url               -> Value 'FieldUrl
-  ValueUserId      :: UserId            -> Value 'FieldUserId
-  ValueObjSize     :: ObjSize           -> Value 'FieldObjSize
-  ValueIPv4        :: IPv4              -> Value 'FieldIPv4
-  ValueIPv6        :: IPv6              -> Value 'FieldIPv6
-  ValueTimestamp   :: OffsetDatetime    -> Value 'FieldTimestamp
-  ValueOffset      :: Offset            -> Value 'FieldOffset
-  ValueDatetime    :: Datetime          -> Value 'FieldDatetime
-  ValueDate        :: Date              -> Value 'FieldDate
-  ValueYear        :: Year              -> Value 'FieldYear
-  ValueMonth       :: Month             -> Value 'FieldMonth
-  ValueDayOfMonth  :: DayOfMonth        -> Value 'FieldDayOfMonth
-  ValueTimeOfDay   :: TimeOfDay         -> Value 'FieldTimeOfDay
+  ValueBracketNum   :: BracketNum        -> Value 'FieldBracketNum
+  ValueHttpMethod   :: HttpM.StdMethod   -> Value 'FieldHttpMethod
+  ValueHttpStatus   :: HttpS.Status      -> Value 'FieldHttpStatus
+  ValueHttpVersion  :: HttpV.HttpVersion -> Value 'FieldHttpVersion
+  ValueHttpProtocol :: HttpProtocol      -> Value 'FieldHttpProtocol 
+  ValueUrl          :: Url               -> Value 'FieldUrl
+  ValueUserId       :: UserId            -> Value 'FieldUserId
+  ValueObjSize      :: ObjSize           -> Value 'FieldObjSize
+  ValueIPv4         :: IPv4              -> Value 'FieldIPv4
+  ValueIPv6         :: IPv6              -> Value 'FieldIPv6
+  ValueTimestamp    :: OffsetDatetime    -> Value 'FieldTimestamp
+  ValueOffset       :: Offset            -> Value 'FieldOffset
+  ValueDatetime     :: Datetime          -> Value 'FieldDatetime
+  ValueDate         :: Date              -> Value 'FieldDate
+  ValueYear         :: Year              -> Value 'FieldYear
+  ValueMonth        :: Month             -> Value 'FieldMonth
+  ValueDayOfMonth   :: DayOfMonth        -> Value 'FieldDayOfMonth
+  ValueTimeOfDay    :: TimeOfDay         -> Value 'FieldTimeOfDay
 
 instance ShowForall Value where
   showsPrecForall p (ValueBracketNum x)  = showParen (p > 10) $ showString "ValueBracketNum"  . showsPrec 11 x
   showsPrecForall p (ValueHttpMethod x)  = showParen (p > 10) $ showString "ValueHttpMethod"  . showsPrec 11 x
   showsPrecForall p (ValueHttpStatus x)  = showParen (p > 10) $ showString "ValueHttpStatus"  . showsPrec 11 x
   showsPrecForall p (ValueHttpVersion x) = showParen (p > 10) $ showString "ValueHttpVersion" . showsPrec 11 x
+  showsPrecForall p (ValueHttpProtocol x)= showParen (p > 10) $ showString "ValueHttpProtocol". showsPrec 11 x 
   showsPrecForall p (ValueUrl x)         = showParen (p > 10) $ showString "ValueUrl"         . showsPrec 11 x
   showsPrecForall p (ValueUserId x)      = showParen (p > 10) $ showString "ValueUserId"      . showsPrec 11 x
   showsPrecForall p (ValueObjSize x)     = showParen (p > 10) $ showString "ValueObjSize"     . showsPrec 11 x
@@ -97,23 +101,24 @@ instance ShowForall Value where
   showsPrecForall p (ValueTimeOfDay x)   = showParen (p > 10) $ showString "ValueTimeOfDay"   . showsPrec 11 x
 
 data SingField :: Field -> Type where
-  SingBracketNum  :: SingField 'FieldBracketNum
-  SingHttpMethod  :: SingField 'FieldHttpMethod
-  SingHttpStatus  :: SingField 'FieldHttpStatus
-  SingHttpVersion :: SingField 'FieldHttpVersion
-  SingUrl         :: SingField 'FieldUrl
-  SingUserId      :: SingField 'FieldUserId
-  SingObjSize     :: SingField 'FieldObjSize
-  SingIPv4        :: SingField 'FieldIPv4
-  SingIPv6        :: SingField 'FieldIPv6
-  SingTimestamp   :: SingField 'FieldTimestamp
-  SingOffset      :: SingField 'FieldOffset
-  SingDatetime    :: SingField 'FieldDatetime
-  SingDate        :: SingField 'FieldDate
-  SingYear        :: SingField 'FieldYear
-  SingMonth       :: SingField 'FieldMonth
-  SingDayOfMonth  :: SingField 'FieldDayOfMonth
-  SingTimeOfDay   :: SingField 'FieldTimeOfDay
+  SingBracketNum   :: SingField 'FieldBracketNum
+  SingHttpMethod   :: SingField 'FieldHttpMethod
+  SingHttpStatus   :: SingField 'FieldHttpStatus
+  SingHttpVersion  :: SingField 'FieldHttpVersion
+  SingHttpProtocol :: SingField 'FieldHttpProtocol 
+  SingUrl          :: SingField 'FieldUrl
+  SingUserId       :: SingField 'FieldUserId
+  SingObjSize      :: SingField 'FieldObjSize
+  SingIPv4         :: SingField 'FieldIPv4
+  SingIPv6         :: SingField 'FieldIPv6
+  SingTimestamp    :: SingField 'FieldTimestamp
+  SingOffset       :: SingField 'FieldOffset
+  SingDatetime     :: SingField 'FieldDatetime
+  SingDate         :: SingField 'FieldDate
+  SingYear         :: SingField 'FieldYear
+  SingMonth        :: SingField 'FieldMonth
+  SingDayOfMonth   :: SingField 'FieldDayOfMonth
+  SingTimeOfDay    :: SingField 'FieldTimeOfDay
 
 type instance Sing = SingField
 
@@ -125,6 +130,8 @@ instance Reify 'FieldHttpStatus where
   reify = SingHttpStatus
 instance Reify 'FieldHttpVersion where
   reify = SingHttpVersion
+instance Reify 'FieldHttpProtocol where
+  reify = SingHttpProtocol
 instance Reify 'FieldUrl where
   reify = SingUrl
 instance Reify 'FieldUserId where
@@ -141,7 +148,6 @@ instance Reify 'FieldOffset where
   reify = SingOffset
 instance Reify 'FieldDatetime where
   reify = SingDatetime
-
 instance Reify 'FieldDate where
   reify = SingDate
 instance Reify 'FieldYear where
@@ -152,6 +158,10 @@ instance Reify 'FieldDayOfMonth where
   reify = SingDayOfMonth
 instance Reify 'FieldTimeOfDay where
   reify = SingTimeOfDay
+
+-- | HTTP Protocol used.
+data HttpProtocol = HTTPS | HTTP | FTP
+  deriving (Eq, Show)
 
 -- | Url type.
 newtype Url = Url { getUrl :: Text }

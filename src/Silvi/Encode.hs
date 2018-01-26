@@ -36,23 +36,24 @@ class Encode a where
 
 instance Encode (Value a) where
   encode = \case
-    ValueBracketNum  x -> encode x
-    ValueHttpMethod  x -> encode x
-    ValueHttpStatus  x -> encode x
-    ValueHttpVersion x -> encode x 
-    ValueUrl         x -> encode x
-    ValueUserId      x -> encode x
-    ValueObjSize     x -> encode x
-    ValueIPv4        x -> encode x
-    ValueIPv6        x -> encode x
-    ValueTimestamp   x -> encode x
-    ValueOffset      x -> encode x
-    ValueDatetime    x -> encode x 
-    ValueDate        x -> encode x
-    ValueYear        x -> encode x
-    ValueMonth       x -> encode x
-    ValueDayOfMonth  x -> encode x
-    ValueTimeOfDay   x -> encode x
+    ValueBracketNum   x -> encode x
+    ValueHttpMethod   x -> encode x
+    ValueHttpStatus   x -> encode x
+    ValueHttpVersion  x -> encode x 
+    ValueHttpProtocol x -> encode x 
+    ValueUrl          x -> encode x
+    ValueUserId       x -> encode x
+    ValueObjSize      x -> encode x
+    ValueIPv4         x -> encode x
+    ValueIPv6         x -> encode x
+    ValueTimestamp    x -> encode x
+    ValueOffset       x -> encode x
+    ValueDatetime     x -> encode x 
+    ValueDate         x -> encode x
+    ValueYear         x -> encode x
+    ValueMonth        x -> encode x
+    ValueDayOfMonth   x -> encode x
+    ValueTimeOfDay    x -> encode x
 
 instance Encode Text where
   encode = id
@@ -91,6 +92,8 @@ instance Encode ObjSize where
 
 instance Encode BracketNum where
   encode (BracketNum x) = "<" `T.append` encode x `T.append` ">"
+
+instance Encode HttpProtocol where
 
 instance Encode IPv4 where
   encode = I4.encode
