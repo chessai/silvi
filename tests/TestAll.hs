@@ -13,6 +13,9 @@ import qualified Data.Text.IO as TIO
 import qualified Silvi.Encode as E
 import qualified Topaz.Rec as Topaz
 
+-- /begin Fallback section
+-- These functions are provided in the event of failure;
+-- they expose more details to the tester.
 testAnnounce :: Text -> IO ()
 testAnnounce x = do
   TIO.putStrLn "================================"
@@ -37,28 +40,31 @@ ms s name = do
   join ok
   success name
 
+fallback :: IO ()
+fallback = do
+  ms (randLog @('[ 'FieldBracketNum   ])) "BracketNum"
+  ms (randLog @('[ 'FieldHttpMethod   ])) "HttpMethod"
+  ms (randLog @('[ 'FieldHttpStatus   ])) "HttpStatus"
+  ms (randLog @('[ 'FieldHttpVersion  ])) "HttpVersion"
+  ms (randLog @('[ 'FieldHttpProtocol ])) "HttpProtocol"
+  ms (randLog @('[ 'FieldUrl          ])) "Url"
+  ms (randLog @('[ 'FieldUserId       ])) "UserId"
+  ms (randLog @('[ 'FieldObjSize      ])) "ObjSize"
+  ms (randLog @('[ 'FieldIPv4         ])) "IPv4"
+  ms (randLog @('[ 'FieldIPv6         ])) "IPv6"
+  ms (randLog @('[ 'FieldTimestamp    ])) "OffsetDatetime"
+  ms (randLog @('[ 'FieldOffset       ])) "Offset"
+  ms (randLog @('[ 'FieldDatetime     ])) "Datetime"
+  ms (randLog @('[ 'FieldDate         ])) "Date"
+  ms (randLog @('[ 'FieldYear         ])) "Year"
+  ms (randLog @('[ 'FieldMonth        ])) "Month"
+  ms (randLog @('[ 'FieldDayOfMonth   ])) "DayOfMonth"
+  ms (randLog @('[ 'FieldTimeOfDay    ])) "TimeOfDay"
+--
+-- /end Fallback section
+
 main :: IO ()
-main = do
-  ms (randLog @('[ 'FieldBracketNum ])) "BracketNum"
-  ms (randLog @('[ 'FieldHttpMethod ])) "HttpMethod"
-  ms (randLog @('[ 'FieldHttpStatus ])) "HttpStatus"
-  ms (randLog @('[ 'FieldHttpVersion])) "HttpVersion"
-  ms (randLog @('[ 'FieldHttpProtocol])) "HttpProtocol"
-  ms (randLog @('[ 'FieldUrl ])) "Url"
-  ms (randLog @('[ 'FieldUserId])) "UserId"
-  ms (randLog @('[ 'FieldObjSize ])) "ObjSize"
-  ms (randLog @('[ 'FieldIPv4 ])) "IPv4"
-  ms (randLog @('[ 'FieldIPv6 ])) "IPv6"
-  ms (randLog @('[ 'FieldTimestamp ])) "OffsetDatetime"
-  ms (randLog @('[ 'FieldOffset ])) "Offset"
-  ms (randLog @('[ 'FieldDatetime ])) "Datetime"
-  ms (randLog @('[ 'FieldDate ])) "Date"
-  ms (randLog @('[ 'FieldYear ])) "Year"
-  ms (randLog @('[ 'FieldMonth ])) "Month"
-  ms (randLog @('[ 'FieldDayOfMonth ])) "DayOfMonth"
-  ms (randLog @('[ 'FieldTimeOfDay ])) "TimeOfDay"
-  
-  printMany 100 randAllTypesLog
+main = printMany 100 randAllTypesLog
 
 type AllTypesLog = '[ 'FieldBracketNum
                     , 'FieldHttpMethod
