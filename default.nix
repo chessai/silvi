@@ -27,17 +27,18 @@ let
            build = name: path: self.callCabal2nix name (builtins.filterSource filterPredicate path) {};
          };        
     {
-      mkDerivation = args: super.mkDerivation (args // {
-        doCheck = pkgs.lib.elem args.pname [ ];
-        doHaddock = false; 
-      });
-      vector     = cp "vector";
+      #vector     = cp "vector";
       # appendConfigureFlag (cp "vector") "-f unsafechecks"; 
       http-types = cp "http-types";
       chronos    = cp "chronos";
       savage     = cp "savage"; 
       ip         = cp "ip"; 
-      silvi      = build "silvi" ./.;
+      quickcheck-classes = cp "quickcheck-classes";
+
+      silvi      = overrideCabal (build "silvi" ./.) (drv: {
+        doCheck = true;
+        doHaddock = false;
+      });
       
     };
   };
