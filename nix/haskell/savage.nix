@@ -7,8 +7,8 @@ mkDerivation {
   version = "1.0.3";
   src = fetchgit {
     url = "https://github.com/chessai/savage.git";
-    sha256 = "0lcgbjd71m38j7bp268w01f9rqk4qv57hw2ij40r9688xbbrglkw";
-    rev = "2e6a7298854224a30c83515160663f2e6104a611";
+    sha256 = "14j6ggmp7d24qb4h32q02sdlh3iarqdr6zqdn13zs0m25rzmhmqv";
+    rev = "7eb5f637bbe3163c74910c84f058dd0f64108615";
   };
   libraryHaskellDepends = [
     base bytestring containers exceptions mmorph monad-control mtl

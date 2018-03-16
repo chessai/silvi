@@ -3,10 +3,10 @@
 let
   fetchNixpkgs = import ./nix/fetchNixpkgs.nix;
   nixpkgs = fetchNixpkgs {
-    rev = "e5629dc51a313c3b99725616718d2deff49cd891"; 
-    sha256 = "0s3a65mswqds5395cqy9d4mj8d75vii2479y4dvyagamv1zh0zp6"; 
+    rev = "1317428ca026ec1d438e68cb0308b38028777492"; 
+    sha256 = "0r9rxk2z15vf3mr0kqwls0p8fh3vvqzg677rzkcxdhnznhjkrnl0"; 
   };
-  pkgs = import nixpkgs { config = {}; };
+  pkgs = import nixpkgs { config = {}; overlays = []; };
   inherit (pkgs) haskell;
 
   filterPredicate = p: type:
@@ -29,11 +29,11 @@ let
     {
       #vector     = cp "vector";
       # appendConfigureFlag (cp "vector") "-f unsafechecks"; 
-      http-types = cp "http-types";
-      chronos    = cp "chronos";
+      #http-types = cp "http-types";
+      #chronos    = cp "chronos";
       savage     = cp "savage"; 
-      ip         = cp "ip"; 
-      quickcheck-classes = cp "quickcheck-classes";
+      #ip         = cp "ip"; 
+      #quickcheck-classes = cp "quickcheck-classes";
 
       silvi      = overrideCabal (build "silvi" ./.) (drv: {
         doCheck = true;

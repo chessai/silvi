@@ -43,11 +43,10 @@ slash        = Atto.char '/'
 space        = Atto.char ' '
 
 parseIPv4 :: Parser IPv4
-parseIPv4 = I4.parser
+parseIPv4 = I4.parserUtf8
 
 parseIPv6 :: Parser IPv6
-parseIPv6 = I6.parser
-
+parseIPv6 = I6.parserUtf8
 parseHttpMethod :: Parser HttpM.Method
 parseHttpMethod = do
       (asciiCI "GET"     *> pure HttpM.methodGet    )
