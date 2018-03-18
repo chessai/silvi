@@ -20,6 +20,7 @@ import           Chronos.Types
 import           Control.Applicative (liftA2)
 import           Control.Monad       (join, replicateM_)
 import           Data.Exists         (Reify (..), SingList (..))
+import Data.Kind (Type)
 import qualified Data.Text.IO        as TIO
 import           Net.IPv4            (ipv4)
 import           Net.IPv6            (ipv6)
@@ -27,8 +28,10 @@ import           Net.Types           (IPv4(..),IPv6(..))
 import           Savage
 import           Savage.Randy        (sample, element, enum, enumBounded, word8, word16)
 import           Savage.Range        (constantBounded)
+import Silvi.Cover
 import qualified Silvi.Encode        as E
-import           Silvi.Types
+--import           Silvi.Types
+import Silvi.Types hiding (Silvi)
 import           Topaz.Rec           (Rec (..), fromSingList)
 import qualified Topaz.Rec           as Topaz
 import qualified Network.HTTP.Types.Method  as HttpM
@@ -36,7 +39,30 @@ import qualified Network.HTTP.Types.Status  as HttpS
 import           Network.HTTP.Types.Version (http09, http10, http11, http20)
 import qualified Network.HTTP.Types.Version as HttpV
 
-rand :: SingField a -> Gen (Value a)
+--type Silvi v a = Gen (Rec v a)
+
+type Silvi'
+  (v :: k -> Type)
+  (a :: [k])
+  = Gen (Rec v a)
+
+type Silvi''
+  (v :: k -> Type)
+  (a :: k)
+  = Gen (v a)
+
+type Silvi   as = Silvi'  Value as
+type UnSilvi as = Silvi'' Value as
+
+--rand :: Generic f => 
+
+--rand' :: 
+--rand' :: k
+--rand :: X -> Gen Y
+--randOne :: forall as. (Reify as) => Silvi as
+--randOneExplicit :: Rec SingField rs -> Silvi rs
+
+rand :: SingField a -> UnSilvi a
 rand = \case
   SingBracketNum   -> ValueBracketNum  <$> randomBracketNum
   SingHttpMethod   -> ValueHttpMethod  <$> randomHttpMethod
@@ -123,11 +149,12 @@ randomTimeOfDay = TimeOfDay
   <*> enum 0 59999
 
 randomDate :: Gen Date
-randomDate = do
-  let year  = randomYear 1995 2021
-      month = enumBounded
-      day   = liftA2 randomDayOfMonth year month
-  Date <$> year <*> month <*> (join day)
+randomDate = undefined
+--do
+--  let year  = randomYear 1995 2021
+--      month = enumBounded
+--      day   = liftA2 randomDayOfMonth year month
+--  Date <$> year <*> month <*> (join day)
 
 randomYear :: Int -- ^ Origin year
            -> Int -- ^ End year
@@ -135,7 +162,8 @@ randomYear :: Int -- ^ Origin year
 randomYear a b = Year <$> enum (min a b) (max a b)
 
 randomMonth :: Gen Month
-randomMonth = enumBounded
+randomMonth = undefined
+--enumBounded
 
 randomDayOfMonth :: Year
                  -> Month
