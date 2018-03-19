@@ -41,26 +41,11 @@ import qualified Network.HTTP.Types.Version as HttpV
 
 --type Silvi v a = Gen (Rec v a)
 
-type Silvi'
-  (v :: k -> Type)
-  (a :: [k])
-  = Gen (Rec v a)
+type R (v :: k -> Type) (a :: [k]) = Gen (Rec v a)
+type K (v :: k -> Type) (a ::  k ) = Gen (    v a)
 
-type Silvi''
-  (v :: k -> Type)
-  (a :: k)
-  = Gen (v a)
-
-type Silvi   as = Silvi'  Value as
-type UnSilvi as = Silvi'' Value as
-
---rand :: Generic f => 
-
---rand' :: 
---rand' :: k
---rand :: X -> Gen Y
---randOne :: forall as. (Reify as) => Silvi as
---randOneExplicit :: Rec SingField rs -> Silvi rs
+type Silvi  as = R Value as
+type UnSilvi a = K Value a
 
 rand :: SingField a -> UnSilvi a
 rand = \case

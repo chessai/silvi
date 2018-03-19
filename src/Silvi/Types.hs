@@ -36,6 +36,9 @@ import qualified Network.HTTP.Types.Version as HttpV
 import           Savage                    (Gen)
 import           Topaz.Rec                  (Rec(..))
 
+class GenForall f where
+  gen :: Sing a -> Gen (f a)
+
 type Silvi a = Gen (Rec Value a)
 
 -- | Different types present in logs.
